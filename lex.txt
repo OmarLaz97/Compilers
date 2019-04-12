@@ -8,7 +8,9 @@
 
 %%
 
-  
+"void"                                              return VOID; 
+"main"                                              retun MAIN;
+"return"                                            return RETURN;
 "sabet"					                        	return CONSTANT;
 "rakam"						                        return INT;
 "3ayem"						                        return FLOAT;
