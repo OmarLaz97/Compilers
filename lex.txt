@@ -26,7 +26,9 @@
 "lef"						                        return FOR;
 "&&"						                            return AND;
 "||"						                            return OR;
+"!"                                                     return NOT;
 "==" 						                            return EQUALEQUAL;
+"!="                                                    return NOTEQUAL;
 ">" 						                            return GREATERTHAN;
 "<"						                            return SMALLERTHAN;
 ">="						                            return GREATERTHANOREQUAL;
