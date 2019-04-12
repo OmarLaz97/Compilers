@@ -1,0 +1,5 @@
+
+dm/bin/gc.dll
+*.exe
+dm/bin/myscanner.obj
+dm/*
