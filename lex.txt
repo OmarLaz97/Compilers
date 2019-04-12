@@ -6,31 +6,32 @@
 %%
 
 [-+*/(){}=!&|] 					return yytext[0];
-"sabet"						return SABET;
-"rakam"						return RAKAM;
-"3ayem"						return 3AYEM;
-"gomla"						return GOMLA;
-"7arf"						return 7ARF;
+"sabet"						return CONSTANT;
+"rakam"						return INT;
+"3ayem"						return FLOAT;
+"gomla"						return STRING;
+"7arf"						return CHAR;
 "bool"						return BOOL;
-"law"						return LAW;
-"yeb2a"						return YEB2A;
-"laken"						return LAKEN;
-"talama"					return TALAMA;
-"e3mel"						return E3MEL;
-"badel"						return BADEL;
-"7alet"						return 7ALET;
-"el3ady"					return EL3ADY;
-"lef"						return LEF;
+"law"						return IF;
+"yeb2a"						return THEN;
+"laken"						return ELSE;
+"talama"					return WHILE;
+"e3mel"						return DO;
+"badel"						return SWITCH;
+"7alet"						return CASE;
+"el3ady"					return DEFAULT;
+"lef"						return FOR;
 &&						return AND;
 ||						return OR;
 == 						return EQUAL;
 > 						return GREATERTHAN;
-<						return SMALLERTAHN;
+<						return SMALLERTHAN;
 >=						return GREATERTHANOREQUAL;
 <=						return SMALLERTHANOREQUAL;
 
-[1-9][0-9]*					return INT;
-[0-9]+\.[0-9]+					return FLOAT;
+[1-9][0-9]*					return INTVALUE;
+[0-9]+\.[0-9]+					return FLOATVALUE;
+
 
 
 [a-zA-Z][_a-zA-Z0-9]*
