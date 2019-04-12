@@ -8,7 +8,9 @@
 
 %%
 
-  
+"void"                                              return VOID; 
+"main"                                              retun MAIN;
+"return"                                            return RETURN;
 "sabet"					                        	return CONSTANT;
 "rakam"						                        return INT;
 "3ayem"						                        return FLOAT;
@@ -54,6 +56,7 @@
 "++" return PLUS_PLUS;
 "--" return MINUS_MINUS;
 "=" return EQUAL; 
+
 
 (-)?[0-9]+      return INTVALUE;
 (-)?[0-9]+\.[0-9]+ 				                        return FLOATVALUE;
