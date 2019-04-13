@@ -50,3 +50,6 @@
 #define EQUAL 50
 #define NOT 51
 #define NOTEQUAL 52
+#define RETURN 53
+#define MAIN 54
+#define COMMENT 55

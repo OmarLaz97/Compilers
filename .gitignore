@@ -3,3 +3,11 @@ dm/bin/gc.dll
 *.exe
 dm/bin/myscanner.obj
 dm/*
+.vscode/ipch/57e840bac73ac004/mmap_address.bin
+lex.yy.c
+lex.yy.obj
+myscanner.map
+myscanner.obj
+out.txt
+.vscode/ipch/f653b8a73d180221/mmap_address.bin
+.vscode/ipch/f653b8a73d180221/MYSCANNER.ipch

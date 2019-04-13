@@ -24,6 +24,8 @@
 "7alet"						                        return CASE;
 "el3ady"					                        return DEFAULT;
 "lef"						                        return FOR;
+"return"                                            return RETURN;
+"main"                                              return MAIN;
 "&&"						                        return AND;
 "||"						                        return OR;
 "!"                                                 return NOT;
@@ -61,20 +63,25 @@
 [0-9]+\.[0-9]*		                                return FLOATVALUE;
 \".*\"                                              return STRINGVALUE;
 \'[a-zA-Z0-9]\'                                     return CHARVALUE;
-True|False                                        return BOOLVALUE;
+True|False                                          return BOOLVALUE;
 
-^[a-zA-Z][_a-zA-Z0-9]*  return IDENTIFIER;
-[ ][a-zA-Z][_a-zA-Z0-9]* return IDENTIFIER;
- 
-[ \t\n] ;	
-[0-9]+[a-zA-Z]  return ERROR;
-. return ERROR;
-^[a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*  return ERROR;
-[ ][a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]* return ERROR;
-[0-9]+\.[0-9]+[_a-zA-Z0-9\.]* return ERROR;
-[0-9]*\.[0-9]+[_a-zA-Z0-9\.]* return ERROR;
-[0-9]+\.[0-9]*[_a-zA-Z0-9\.]* return ERROR;
-%%
+^[a-zA-Z][_a-zA-Z0-9]*                              return IDENTIFIER;
+[ ][a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
+
+\/\/.*                                              return COMMENT;
+
+[ \t\n] ;
+ 	
+[0-9]+[a-zA-Z]                                      return ERROR;
+.                                                   return ERROR;
+^[a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*               return ERROR;
+[ ][a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*             return ERROR;
+[0-9]+\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
+[0-9]*\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
+[0-9]+\.[0-9]*[_a-zA-Z0-9\.]*                       return ERROR;
+
+
+%%          
 int yywrap(void){
 return 1;
 }

@@ -1,3 +1,17 @@
+g!= 5
+g == k
+k= !k
+k=!j
+
+//hey
+/hey
+///hey
+
+maind
+main
+return 
+returnf
+
 sabet d;
 sabetd;
 dsabet;
