@@ -11,3 +11,9 @@ myscanner.obj
 out.txt
 .vscode/ipch/f653b8a73d180221/mmap_address.bin
 .vscode/ipch/f653b8a73d180221/MYSCANNER.ipch
+.vscode/ipch/53bb2057a5e6725c/mmap_address.bin
+ParserYacc.tab.c
+ParserYacc.tab.h
+.vscode/ipch/53bb2b57a5e6850d/mmap_address.bin
+.vscode/ipch/53bb2b57a5e6850d/PARSER.TAB.ipch
+.vscode/ipch/db066f23bf373dea/mmap_address.bin

@@ -179,6 +179,9 @@ int main(void)
 			case COMMENT:
 			fprintf(fp,"Comment values: %s at line %d\n",yytext,yylineno);
 			break;	
+			case VOID:
+			fprintf(fp,"Void values: %s at line %d\n",yytext,yylineno);
+			break;
 		}
 		token = yylex();
 	}

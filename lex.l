@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "ParserYacc.tab.h"
 %}
 %option nounput yylineno
 
@@ -26,6 +27,7 @@
 "lef"						                        return FOR;
 "return"                                            return RETURN;
 "main"                                              return MAIN;
+"void"                                              return VOID;
 "&&"						                        return AND;
 "||"						                        return OR;
 "!"                                                 return NOT;

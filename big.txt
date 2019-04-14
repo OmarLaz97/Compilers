@@ -2,6 +2,7 @@ g!= 5
 g == k
 k= !k
 k=!j
+k!=5
 
 //hey
 /hey
