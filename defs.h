@@ -53,3 +53,4 @@
 #define RETURN 53
 #define MAIN 54
 #define COMMENT 55
+#define VOID 56

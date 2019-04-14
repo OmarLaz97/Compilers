@@ -1,5 +1,4 @@
 %{
-#include "defs.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,6 +83,3 @@ True|False                                          return BOOLVALUE;
 
 
 %%          
-int yywrap(void){
-return 1;
-}
