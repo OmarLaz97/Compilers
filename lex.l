@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ParserYacc.tab.h"
+
 %}
 %option nounput yylineno
 
@@ -65,14 +66,14 @@
 \".*\"                                              return STRINGVALUE;
 \'[a-zA-Z0-9]\'                                     return CHARVALUE;
 True|False                                          return BOOLVALUE;
-
+[ \t\n] ;
 ^[a-zA-Z][_a-zA-Z0-9]*                              return IDENTIFIER;
-[ ][a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
+[a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
 
 (\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(\/\/.*)                                           return COMMENT;
 
 
-[\t\n] ;
+
 
  	
 [0-9]+[a-zA-Z]                                      return ERROR;
@@ -85,4 +86,8 @@ True|False                                          return BOOLVALUE;
 
 
 
-%%          
+%%       
+
+int yywrap(void){
+return 1;
+}

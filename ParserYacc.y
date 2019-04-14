@@ -42,12 +42,16 @@
 %%
     /* Language BODY */
                 /* Comment_ Function_ Comment_ Main_ Comment_ */
-    Root_: Comment_ SEMI_COLON {printf("\nAccepted inshaallah\n");}
+    Root_: Comment_ Main_ {printf("\nAccepted inshaallah\n");}
         ;
 
     Comment_:  COMMENT  /* COMMENT Comment_ */{printf("First comment\n");}
           |Comment_ COMMENT {printf("Second comment\n");}
+          | 
         ; 
+
+    Main_:      VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE
+        ;    
     
 %%
 
@@ -63,6 +67,4 @@ void yyerror(char *msg){
   exit(1);
 }
 
-int yywrap(){
-return 1;
-}
+

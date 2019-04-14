@@ -1,6 +1,7 @@
-//ddasfadfadfadf
-//asfasfasfasffasf
-/* jadkhfkjhfjkahdfjkahdjkfh 
-adfdafadfadfaf */
-asfasfasf
-;
+rakam x=3;
+rakam x;
+rakam x, y;
+rakam x, y=8;
+rakam x= y;
+
+void main
