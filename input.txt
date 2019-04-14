@@ -1,7 +1,4 @@
-rakam x=3;
-rakam x;
-rakam x, y;
-rakam x, y=8;
-rakam x= y;
-
-void main
+//hello
+void main(){
+    rakam x,y = 5;
+}

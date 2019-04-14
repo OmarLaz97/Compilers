@@ -88,6 +88,3 @@ True|False                                          return BOOLVALUE;
 
 %%       
 
-int yywrap(void){
-return 1;
-}

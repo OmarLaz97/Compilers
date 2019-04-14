@@ -47,11 +47,46 @@
 
     Comment_:  COMMENT  /* COMMENT Comment_ */{printf("First comment\n");}
           |Comment_ COMMENT {printf("Second comment\n");}
-          | 
+           
         ; 
 
-    Main_:      VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE
-        ;    
+    Main_:      VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("Main root\n");}
+        ;
+
+    Body_: Body_  Declaration_  {printf("Body\n");}
+    | Declaration_
+    ;
+
+    Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
+                | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
+                ;
+
+    IdentifierList_: IDENTIFIER  {printf("id \n");}
+                  | IDENTIFIER COMMA IdentifierList_ {printf("list of identifiers \n ")} 
+                  | Assignment_ {printf("assignment \n")}
+                   ;
+
+    
+    Assignment_: IDENTIFIER EQUAL IDENTIFIER {printf("assignment equal id \n")} 
+            | IDENTIFIER EQUAL Val_ {printf("assignment equal val \n")}
+            ;
+
+    Val_: Number_  {printf("val numb \n")}
+        | STRINGVALUE {printf("val string value\n")}
+        | CHARVALUE {printf("val char \n")}
+        | BOOLVALUE {printf("val bool \n")}
+        ;
+
+    Number_: INTVALUE {printf("number int \n")}
+           | FLOATVALUE {printf("number float \n")}
+           ;
+
+    datatype : INT {printf("Data Type");}
+			  | FLOAT 
+			  | STRING 
+			  | CHAR 
+			  | BOOL 
+		 ;
     
 %%
 
@@ -60,6 +95,10 @@
 int main(){
   yyparse();
   return yylex();
+}
+
+int yywrap(void){
+return 1;
 }
 
 void yyerror(char *msg){
