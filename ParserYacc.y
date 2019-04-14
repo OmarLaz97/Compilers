@@ -48,6 +48,7 @@
     Comment_:  COMMENT  /* COMMENT Comment_ */{printf("First comment\n");}
           |Comment_ COMMENT {printf("Second comment\n");}
         ; 
+    Main_: SEMI_COLON {printf("\n");};
 
     
 %%
