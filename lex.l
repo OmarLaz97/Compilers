@@ -69,9 +69,10 @@ True|False                                          return BOOLVALUE;
 ^[a-zA-Z][_a-zA-Z0-9]*                              return IDENTIFIER;
 [ ][a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
 
-\/\/.*                                              return COMMENT;
+(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(\/\/.*)                                           return COMMENT;
 
-[ \t\n] ;
+[ \t\n];
+
  	
 [0-9]+[a-zA-Z]                                      return ERROR;
 .                                                   return ERROR;
