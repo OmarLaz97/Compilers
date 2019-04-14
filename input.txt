@@ -1,4 +1,4 @@
 //hello
 void main(){
-    rakam x,y = 5;
+    rakam x = a > 3;
 }

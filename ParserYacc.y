@@ -67,12 +67,11 @@
                    ;
 
     
-    Assignment_: IDENTIFIER EQUAL IDENTIFIER {printf("assignment equal id \n")} 
-            | IDENTIFIER EQUAL Val_ {printf("assignment equal val \n")}
+    Assignment_: IDENTIFIER EQUAL Val_ {printf("assignment equal val \n")}
+            | IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
             ;
 
-    Val_: Number_  {printf("val numb \n")}
-        | STRINGVALUE {printf("val string value\n")}
+    Val_: STRINGVALUE {printf("val string value\n")}
         | CHARVALUE {printf("val char \n")}
         | BOOLVALUE {printf("val bool \n")}
         ;
@@ -81,12 +80,50 @@
            | FLOATVALUE {printf("number float \n")}
            ;
 
+    Expr_: MathExpr_
+            | LogExpr_
+            ;
+
     datatype : INT {printf("Data Type");}
 			  | FLOAT 
 			  | STRING 
 			  | CHAR 
 			  | BOOL 
 		 ;
+       
+  MathExpr_: MathExpr_ PLUS Term_                
+          |MathExpr_ MINUS Term_                
+          |Term_                       
+            ;
+
+  Term_: Term_ MULTIPLY Factor_                 
+            |Term_ DIVIDE Factor_                  
+            |Factor_                       
+              ;
+
+Factor_: OPENED_BRACKET MathExpr_ CLOSED_BRACKET               
+          |MINUS Factor_                   
+          |Number_
+          |IDENTIFIER                     
+            ;
+
+
+    LogExpr_  : IDENTIFIER
+                | Val_
+                | LogExpr_ OR LogExpr_ 
+                | LogExpr_ AND LogExpr_ 
+                | LogExpr_ NOTEQUAL LogExpr_ 
+                | LogExpr_ EQUALEQUAL LogExpr_
+                | NOT LogExpr_
+                | OPENED_BRACKET LogExpr_ CLOSED_BRACKET
+                | MathExpr_ NOTEQUAL MathExpr_
+                | MathExpr_ EQUALEQUAL MathExpr_
+                | MathExpr_ GREATERTHAN MathExpr_ {printf("greater than expression")}
+                | MathExpr_ GREATERTHANOREQUAL MathExpr_
+                | MathExpr_ SMALLERTHAN MathExpr_
+                | MathExpr_ SMALLERTHANOREQUAL MathExpr_
+                ;
+  
     
 %%
 
