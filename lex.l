@@ -71,7 +71,8 @@ True|False                                          return BOOLVALUE;
 
 (\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(\/\/.*)                                           return COMMENT;
 
-[ \t\n];
+
+[\t\n] ;
 
  	
 [0-9]+[a-zA-Z]                                      return ERROR;
@@ -81,6 +82,7 @@ True|False                                          return BOOLVALUE;
 [0-9]+\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
 [0-9]*\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
 [0-9]+\.[0-9]*[_a-zA-Z0-9\.]*                       return ERROR;
+
 
 
 %%          
