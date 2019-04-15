@@ -23,7 +23,7 @@
 %token <identifier> IDENTIFIER;
 %token CONSTANT INT FLOAT STRING CHAR BOOL IF THEN ELSE WHILE DO SWITCH CASE DEFAULT FOR AND OR EQUALEQUAL GREATERTHAN SMALLERTHAN GREATERTHANOREQUAL SMALLERTHANOREQUAL NOT NOTEQUAL VOID MAIN RETURN BOOLVALUE 
 %token SEMI_COLON OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA TWO_DOTS PLUS MINUS MULTIPLY DIVIDE REMAINDER PLUS_EQUAL MINUS_EQUAL MULTIPLY_EQUAL DIVIDE_EQUAL PLUS_PLUS MINUS_MINUS EQUAL
-%token ERROR
+%token ERROR BREAK
 
 %right MINUS
 %left PLUS 
@@ -43,12 +43,42 @@
     /* Language BODY */
                 /* Comment_ Function_ Comment_ Main_ Comment_ */
     Root_: Comment_ Main_ {printf("\nAccepted inshaallah\n");}
+         | Comment_ Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Main_ {printf("\nAccepted inshaallah\n");}
+         | Comment_ Function_ Main_ {printf("\nAccepted inshaallah\n");}
+         | Comment_ Function_ Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Function_ Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Function_ Main_ {printf("\nAccepted inshaallah\n");}
+         | Comment_ Function_ Comment_ Main_ {printf("\nAccepted inshaallah\n");}
+         | Comment_ Function_ Comment_ Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Function_ Comment_ Main_ Comment_ {printf("\nAccepted inshaallah\n");}
+         | Function_ Comment_ Main_ {printf("\nAccepted inshaallah\n");}
         ;
 
     Comment_:  COMMENT  /* COMMENT Comment_ */{printf("First comment\n");}
-          |Comment_ COMMENT {printf("Second comment\n");}
-           
-        ; 
+            |  Comment_ COMMENT {printf("Second comment\n");}
+            ;
+
+    Function_: FnDeclaration_
+             | Function_ FnDeclaration_
+             | Function_ Comment_ FnDeclaration_
+             ;
+
+
+    FnDeclaration_: VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE
+                  | VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE
+                  | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE
+                  | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN CaseVal_ SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN CaseVal_ SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE
+                  ;   
+
+    FnArgs_: datatype IDENTIFIER COMMA FnArgs_
+           | datatype IDENTIFIER
+           ;                       
 
     Main_:      VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("Main root\n");}
         ;
@@ -61,6 +91,14 @@
     | IfStmt_
     | Body_ WhileStmt_
     | WhileStmt_
+    | Body_ ForStmt_
+    | ForStmt_
+    | Body_ DoWhileStmt_
+    | DoWhileStmt_
+    | Body_ SwitchStmt_
+    | SwitchStmt_
+    | Body_ COMMENT
+    | COMMENT
     ;
 
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
@@ -80,6 +118,8 @@
                    ;
 
     Assignment_: IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
+              | IDENTIFIER EQUAL Expr2_
+              |  Expr2_
             ;
 
     Val_: STRINGVALUE {printf("val string value\n")}
@@ -90,6 +130,12 @@
     Number_: INTVALUE {printf("number int \n")}
            | FLOATVALUE {printf("number float \n")}
            ;
+
+    Expr2_: IDENTIFIER PLUS_PLUS
+          | PLUS_PLUS IDENTIFIER
+          | IDENTIFIER MINUS_MINUS
+          | MINUS_MINUS IDENTIFIER
+          ;
 
     Expr_: Logical_;
 
@@ -116,7 +162,42 @@
            ;
 
     WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE  
-              ;      
+              ;    
+
+    ForStmt_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE
+            ;
+
+    First_: Declaration_ | Assignment_ SEMI_COLON
+          ;
+
+    Second_: Expr_ SEMI_COLON
+           ;
+
+    Third_: Assignment_
+          ;   
+
+    DoWhileStmt_: DO OPENED_BRACE Body_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON      
+                ;    
+
+    SwitchStmt_: SWITCH OPENED_BRACKET IDENTIFIER CLOSED_BRACKET OPENED_BRACE CaseStmt_ CLOSED_BRACE 
+               ;
+
+    CaseStmt_: CaseStmt_ DefaultStmt_
+             | DefaultStmt_
+             | CaseStmt_ CASE CaseVal_ TWO_DOTS CaseBody_
+             | CASE CaseVal_ TWO_DOTS CaseBody_  
+             ;
+
+    DefaultStmt_: DEFAULT TWO_DOTS CaseBody_
+                ;      
+
+    CaseVal_: Number_ | Val_ ;
+
+    CaseBody_: Body_ BREAK SEMI_COLON
+            | BREAK SEMI_COLON
+            ; 
+                   
+                                     
 %%
 
 #include"lex.yy.c"

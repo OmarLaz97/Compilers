@@ -1,11 +1,64 @@
-//hello
+//Void function, return is optional
+void Fn1 (gomla s, 3ayem secondarg){
+    s = "";
+    //uncomment return to test
+    //return;
+}
+//Function to return 3ayem, should have a return 
+3ayem Calc (3ayem s, 3ayem secondarg){
+    r = s+l;
+    return d;
+}
+
 void main(){
+    //beg of code
+
+    //Switch case
+    badel(a){
+        7alet 5:
+                break;
+        el3ady:
+                break;
+        7alet 6:
+                break;
+        7alet 33:
+                y=h;
+                l++;
+                m= m* n;
+                badel (y){
+                    7alet 'd':
+                            h= "kk";
+                            break;
+                    el3ady:
+                            break;
+                }
+                break;
+    }
+
+    //do while
+    e3mel {
+        i++;
+        l= l+3;
+        l=kk;
+    } talama (a);
+
     rakam x = a > 3;
     x=a&&b;
     3ayem x;
     z= !c;
     h=a||b;
     rakam h = (3);
+
+    //for loops
+    lef(f=3; f<5; f=f+1){
+        l=l;
+    }
+
+    lef(f=3; f<5; f++){
+        l=l;
+    }
+
+    //if else stmt
     law (a){
         l=h+k;
         law (a&&h) {
@@ -17,7 +70,30 @@ void main(){
         h= k;}
     }
 
+    //if else if stmt
+    law (a){
+        p++;
+    } laken law (!a){
+        p--;
+    }
+
+    //while
     talama(d){
         j = 33;
     }
+
+    //if and while in while
+    talama (f){
+        law (k==3){
+            j = 4+5;
+        }
+        laken law (k==9){
+            j=5+6;
+        }
+
+        talama (f){
+            p= l + 5 ;
+        }
+    }
 }
+//end

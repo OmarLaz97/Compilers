@@ -54,3 +54,4 @@
 #define MAIN 54
 #define COMMENT 55
 #define VOID 56
+#define BREAK 57

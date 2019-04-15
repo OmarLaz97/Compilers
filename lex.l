@@ -25,6 +25,7 @@
 "7alet"						                        return CASE;
 "el3ady"					                        return DEFAULT;
 "lef"						                        return FOR;
+"break"                                             return BREAK;
 "return"                                            return RETURN;
 "main"                                              return MAIN;
 "void"                                              return VOID;
