@@ -5,4 +5,19 @@ void main(){
     3ayem x;
     z= !c;
     h=a||b;
+    rakam h = (3);
+    law (a){
+        l=h+k;
+        law (a&&h) {
+        h= k;}
+
+        l=h+k;
+    }
+    laken { law (a&&h) {
+        h= k;}
+    }
+
+    talama(d){
+        j = 33;
+    }
 }

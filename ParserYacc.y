@@ -57,7 +57,10 @@
     | Declaration_
     | Body_ Assignment_ SEMI_COLON
     | Assignment_ SEMI_COLON
-    
+    | Body_ IfStmt_
+    | IfStmt_
+    | Body_ WhileStmt_
+    | WhileStmt_
     ;
 
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
@@ -107,6 +110,13 @@
 
     Factor_: IDENTIFIER | Val_ | Number_ | OPENED_BRACKET Logical_ CLOSED_BRACKET;
 
+    IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE 
+           | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE  
+           | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfStmt_
+           ;
+
+    WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE  
+              ;      
 %%
 
 #include"lex.yy.c"
