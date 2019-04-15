@@ -55,18 +55,27 @@
 
     Body_: Body_  Declaration_  {printf("Body\n");}
     | Declaration_
+    | Body_ Assignment_ SEMI_COLON
+    | Assignment_ SEMI_COLON
+    
     ;
 
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
                 | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
                 ;
 
+    datatype : INT {printf("Data Type");}
+			  | FLOAT 
+			  | STRING 
+			  | CHAR 
+			  | BOOL 
+		 ;            
+
     IdentifierList_: IDENTIFIER  {printf("id \n");}
                   | IDENTIFIER COMMA IdentifierList_ {printf("list of identifiers \n ")} 
                   | Assignment_ {printf("assignment \n")}
                    ;
 
-    
     Assignment_: IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
             ;
 
@@ -79,51 +88,25 @@
            | FLOATVALUE {printf("number float \n")}
            ;
 
-    Expr_: MathExpr_
-            | LogExpr_
-            ;
+    Expr_: Logical_;
 
-    datatype : INT {printf("Data Type");}
-			  | FLOAT 
-			  | STRING 
-			  | CHAR 
-			  | BOOL 
-		 ;
-       
-  MathExpr_: MathExpr_ PLUS Term_                
-          |MathExpr_ MINUS Term_                
-          |Term_                       
-            ;
+    Logical_: Logical_ AND Math_
+            | Logical_ OR Math_
+            | Logical_ GREATERTHAN Math_
+            | Logical_ GREATERTHANOREQUAL Math_
+            | Logical_ SMALLERTHAN Math_
+            | Logical_ SMALLERTHANOREQUAL Math_
+            | Logical_ EQUALEQUAL Math_
+            | Logical_ NOTEQUAL Math_
+            | NOT Math_
+            | Math_;
 
-  Term_: Term_ MULTIPLY Factor_                 
-            |Term_ DIVIDE Factor_                  
-            |Factor_                       
-              ;
+    Math_: Math_ PLUS Term_ | Math_ MINUS Term_ | Term_;
 
-Factor_: OPENED_BRACKET MathExpr_ CLOSED_BRACKET               
-          |MINUS Factor_                   
-          |Number_
-          |IDENTIFIER                     
-            ;
+    Term_: Term_ MULTIPLY Factor_ | Term_ DIVIDE Factor_ | Factor_;
 
+    Factor_: IDENTIFIER | Val_ | Number_ | OPENED_BRACKET Logical_ CLOSED_BRACKET;
 
-    LogExpr_  : Val_
-                
-                | LogExpr_ OR LogExpr_ ++
-                | LogExpr_ AND LogExpr_ 
-                | LogExpr_ NOTEQUAL LogExpr_ 
-                | LogExpr_ EQUALEQUAL LogExpr_
-                | NOT LogExpr_
-                | OPENED_BRACKET LogExpr_ CLOSED_BRACKET
-                | MathExpr_ NOTEQUAL MathExpr_
-                | MathExpr_ EQUALEQUAL MathExpr_
-                | MathExpr_ GREATERTHAN MathExpr_ {printf("greater than expression")}
-                | MathExpr_ GREATERTHANOREQUAL MathExpr_
-                | MathExpr_ SMALLERTHAN MathExpr_
-                | MathExpr_ SMALLERTHANOREQUAL MathExpr_
-                ;
-  
-    
 %%
 
 #include"lex.yy.c"

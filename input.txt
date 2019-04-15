@@ -1,4 +1,8 @@
 //hello
 void main(){
     rakam x = a > 3;
+    x=a&&b;
+    3ayem x;
+    z= !c;
+    h=a||b;
 }
