@@ -67,8 +67,7 @@
                    ;
 
     
-    Assignment_: IDENTIFIER EQUAL Val_ {printf("assignment equal val \n")}
-            | IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
+    Assignment_: IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
             ;
 
     Val_: STRINGVALUE {printf("val string value\n")}
@@ -108,9 +107,9 @@ Factor_: OPENED_BRACKET MathExpr_ CLOSED_BRACKET
             ;
 
 
-    LogExpr_  : IDENTIFIER
-                | Val_
-                | LogExpr_ OR LogExpr_ 
+    LogExpr_  : Val_
+                
+                | LogExpr_ OR LogExpr_ ++
                 | LogExpr_ AND LogExpr_ 
                 | LogExpr_ NOTEQUAL LogExpr_ 
                 | LogExpr_ EQUALEQUAL LogExpr_
