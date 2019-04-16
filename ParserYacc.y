@@ -80,7 +80,8 @@
            | datatype IDENTIFIER
            ;                       
 
-    Main_:      VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("Main root\n");}
+    Main_: VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("Main root\n");}
+         | VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("Main root\n");}
         ;
 
     Body_: Body_  Declaration_  {printf("Body\n");}
