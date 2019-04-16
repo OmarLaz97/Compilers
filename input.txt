@@ -3,15 +3,85 @@ void Fn1 (gomla s, 3ayem secondarg){
     s = "";
     //uncomment return to test
     //return;
+
+    law (k){
+        //test
+        return;
+    } laken {
+        k--;
+        return;
+    }
+
+    law (k){
+        //test
+    } laken {
+        k--;
+        return;
+    }
+
+    law (k){
+        //test
+        return;
+    } laken law (i){
+        k--;
+        return;
+    }
+    law (k){
+        //test
+       
+    } laken law (i){
+        k--;
+        return;
+    }
 }
 //Function to return 3ayem, should have a return 
 3ayem Calc (3ayem s, 3ayem secondarg){
+
     r = s+l;
+    law (!l){
+        //test
+        //return; //will cause error
+        return d;
+        
+    } 
+
+    law (o){
+        h++;
+        return 5;
+        
+    } laken {
+        //ll
+        return 11;  
+    }
+
+    law (o){
+        h++;
+        
+    } laken law (l){
+        //ll
+        return 11;  
+    }
+    
     return d;
+}
+
+void fn3(){
+    //hiii
+    law (g==l){
+        h=j;
+        return;
+    }
+    return;
 }
 
 void main(){
     //beg of code
+    law (k==0){
+        l = p;
+        
+        //return 6; will cause error
+        return;
+    }
 
     //Switch case
     badel(a){

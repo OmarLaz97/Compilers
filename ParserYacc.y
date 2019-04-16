@@ -70,10 +70,8 @@
                   | VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE
                   | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE
                   | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE
-                  | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN CaseVal_ SEMI_COLON CLOSED_BRACE
-                  | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE
-                  | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN CaseVal_ SEMI_COLON CLOSED_BRACE
-                  | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE
+                  | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE
                   ;   
 
     FnArgs_: datatype IDENTIFIER COMMA FnArgs_
@@ -85,22 +83,44 @@
         ;
 
     Body_: Body_  Declaration_  {printf("Body\n");}
-    | Declaration_
-    | Body_ Assignment_ SEMI_COLON
-    | Assignment_ SEMI_COLON
-    | Body_ IfStmt_
-    | IfStmt_
-    | Body_ WhileStmt_
-    | WhileStmt_
-    | Body_ ForStmt_
-    | ForStmt_
-    | Body_ DoWhileStmt_
-    | DoWhileStmt_
-    | Body_ SwitchStmt_
-    | SwitchStmt_
-    | Body_ COMMENT
-    | COMMENT
-    ;
+         | Declaration_
+         | Body_ Assignment_ SEMI_COLON
+         | Assignment_ SEMI_COLON
+         | Body_ IfStmt_
+         | IfStmt_
+         | Body_ IfRtnZero_
+         | IfRtnZero_
+         | Body_ WhileStmt_
+         | WhileStmt_
+         | Body_ ForStmt_
+         | ForStmt_
+         | Body_ DoWhileStmt_
+         | DoWhileStmt_
+         | Body_ SwitchStmt_
+         | SwitchStmt_
+         | Body_ COMMENT
+         | COMMENT
+         ;
+
+    BodyRtn_: BodyRtn_  Declaration_  {printf("Body\n");}
+            | Declaration_
+            | BodyRtn_ Assignment_ SEMI_COLON
+            | Assignment_ SEMI_COLON
+            | BodyRtn_ IfStmt_
+            | IfStmt_
+            | BodyRtn_ IfRtn_
+            | IfRtn_
+            | BodyRtn_ WhileStmt_
+            | WhileStmt_
+            | BodyRtn_ ForStmt_
+            | ForStmt_
+            | BodyRtn_ DoWhileStmt_
+            | DoWhileStmt_
+            | BodyRtn_ SwitchStmt_
+            | SwitchStmt_
+            | BodyRtn_ COMMENT
+            | COMMENT
+            ;
 
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
                 | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
@@ -162,6 +182,24 @@
            | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfStmt_
            ;
 
+    IfRtnZero_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE 
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE  
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE IfStmt_   
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE IfRtnZero_   
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfRtnZero_ 
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE  
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE  
+              ;
+
+    IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE 
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE  
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE IfStmt_  
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE IfRtn_  
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfRtn_ 
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE  
+          | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE                
+          ;
+
     WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE  
               ;    
 
@@ -197,6 +235,9 @@
     CaseBody_: Body_ BREAK SEMI_COLON
             | BREAK SEMI_COLON
             ; 
+
+    AllVals_: Number_ | Val_ | IDENTIFIER
+            ;        
                    
                                      
 %%
