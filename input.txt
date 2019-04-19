@@ -1,6 +1,8 @@
 //Void function, return is optional
-void Fn1 (gomla s, 3ayem secondarg){
+void Fn1 (gomla s, 3ayem secondarg, rakam arr[]){
     s = "";
+    fn(3, 5);
+    fn(3, arr[0]);
     //rakam x++;
     x++;
     x+=6;

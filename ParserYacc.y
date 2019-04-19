@@ -75,6 +75,8 @@
                   ;  
         FnArgs_: datatype IDENTIFIER COMMA FnArgs_
            | datatype IDENTIFIER
+           |datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA FnArgs_
+           | datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET
            ; 
 
         FnCall_: IDENTIFIER OPENED_BRACKET CLOSED_BRACKET
@@ -82,7 +84,9 @@
                 ;
 
         FnCallArgs_: FnCallArgs_ COMMA AllVals_
+        |FnCallArgs_ COMMA IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
            | AllVals_
+           |IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
            ;  
          
 
@@ -96,6 +100,8 @@
          | Declaration_
          | Body_ Assignment_ SEMI_COLON
          | Assignment_ SEMI_COLON
+         | Body_ FnCall_ SEMI_COLON
+         | FnCall_ SEMI_COLON
           | Body_ Expr2_ SEMI_COLON
          | Expr2_ SEMI_COLON
          | Body_ IfStmt_
@@ -118,6 +124,8 @@
             | Declaration_
             | BodyRtn_ Assignment_ SEMI_COLON
             | Assignment_ SEMI_COLON
+            | BodyRtn_ FnCall_ SEMI_COLON
+            | FnCall_ SEMI_COLON
             | BodyRtn_ Expr2_ SEMI_COLON
             | Expr2_ SEMI_COLON
             | BodyRtn_ IfStmt_
