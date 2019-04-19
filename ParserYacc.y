@@ -72,11 +72,21 @@
                   | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE
                   | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE
                   | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE
-                  ;   
-
-    FnArgs_: datatype IDENTIFIER COMMA FnArgs_
+                  ;  
+        FnArgs_: datatype IDENTIFIER COMMA FnArgs_
            | datatype IDENTIFIER
-           ;                       
+           ; 
+
+        FnCall_: IDENTIFIER OPENED_BRACKET CLOSED_BRACKET
+                |IDENTIFIER OPENED_BRACKET FnCallArgs_ CLOSED_BRACKET
+                ;
+
+        FnCallArgs_: FnCallArgs_ COMMA AllVals_
+           | AllVals_
+           ;  
+         
+
+                         
 
     Main_: VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("Main root\n");}
          | VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("Main root\n");}
@@ -124,6 +134,7 @@
 
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
                 | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
+                |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON
                 ;
 
     datatype : INT {printf("Data Type");}
@@ -140,6 +151,8 @@
 
     Assignment_: IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
               | IDENTIFIER EQUAL Expr2_
+              |IDENTIFIER EQUAL FnCall_
+              |IDENTIFIER EQUAL IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
               |  Expr2_
             ;
 

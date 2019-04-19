@@ -1,0 +1,3 @@
+void main(){
+    rakam x= hi();
+}
