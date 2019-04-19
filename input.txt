@@ -1,10 +1,14 @@
 //Void function, return is optional
 void Fn1 (gomla s, 3ayem secondarg){
     s = "";
-    rakam x++;
+    //rakam x++;
+    x++;
+    x+=6;
     rakam a[5];
     rakam x= arr[3];
     x=arr[3];
+    rakam arr[5]={4,d,5};
+    arr[4]=6;
     //uncomment return to test
     //return;
     rakam x,y= hello(3, y);

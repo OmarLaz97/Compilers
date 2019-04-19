@@ -96,6 +96,8 @@
          | Declaration_
          | Body_ Assignment_ SEMI_COLON
          | Assignment_ SEMI_COLON
+          | Body_ Expr2_ SEMI_COLON
+         | Expr2_ SEMI_COLON
          | Body_ IfStmt_
          | IfStmt_
          | Body_ IfRtnZero_
@@ -116,6 +118,8 @@
             | Declaration_
             | BodyRtn_ Assignment_ SEMI_COLON
             | Assignment_ SEMI_COLON
+            | BodyRtn_ Expr2_ SEMI_COLON
+            | Expr2_ SEMI_COLON
             | BodyRtn_ IfStmt_
             | IfStmt_
             | BodyRtn_ IfRtn_
@@ -135,7 +139,12 @@
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
                 | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
                 |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON
+                |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrVal_ CLOSED_BRACE SEMI_COLON
+                |IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL AllVals_ SEMI_COLON
                 ;
+   ArrVal_: ArrVal_ COMMA AllVals_
+   |AllVals_
+   ;
 
     datatype : INT {printf("Data Type");}
 			  | FLOAT 
@@ -153,7 +162,7 @@
               | IDENTIFIER EQUAL Expr2_
               |IDENTIFIER EQUAL FnCall_
               |IDENTIFIER EQUAL IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
-              |  Expr2_
+              
             ;
 
     Val_: STRINGVALUE {printf("val string value\n")}
@@ -169,6 +178,10 @@
           | PLUS_PLUS IDENTIFIER
           | IDENTIFIER MINUS_MINUS
           | MINUS_MINUS IDENTIFIER
+          |IDENTIFIER PLUS_EQUAL Number_
+          |IDENTIFIER MINUS_EQUAL Number_
+          |IDENTIFIER MULTIPLY_EQUAL Number_
+          |IDENTIFIER DIVIDE_EQUAL Number_
           ;
 
     Expr_: Logical_;
@@ -226,6 +239,7 @@
            ;
 
     Third_: Assignment_
+        |Expr2_
           ;   
 
     DoWhileStmt_: DO OPENED_BRACE Body_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON      
