@@ -83,6 +83,15 @@ void main(){
         return;
     }
 
+    talama(l){
+        k++;
+        law (o){
+            j++;
+          
+            return;
+        }
+    }
+
     //Switch case
     badel(a){
         7alet 5:
