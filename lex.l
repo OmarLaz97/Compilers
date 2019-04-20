@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ParserYacc.tab.h"
+int mylineno = 1;
 
 %}
 %option nounput yylineno
@@ -67,7 +68,8 @@
 \".*\"                                              return STRINGVALUE;
 \'[a-zA-Z0-9]\'                                     return CHARVALUE;
 True|False                                          return BOOLVALUE;
-[ \t\n] ;
+\n {mylineno++;}
+[ \t] ;
 ^[a-zA-Z][_a-zA-Z0-9]*                              return IDENTIFIER;
 [a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
 
@@ -77,15 +79,14 @@ True|False                                          return BOOLVALUE;
 
 
  	
-[0-9]+[a-zA-Z]                                      return ERROR;
-.                                                   return ERROR;
-^[a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*               return ERROR;
-[ ][a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*             return ERROR;
-[0-9]+\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
-[0-9]*\.[0-9]+[_a-zA-Z0-9\.]*                       return ERROR;
-[0-9]+\.[0-9]*[_a-zA-Z0-9\.]*                       return ERROR;
+[0-9]+[a-zA-Z]                                      {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+.                                                   {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+^[a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*               {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+[ ][a-zA-Z][_a-zA-Z0-9]*\.[_a-zA-Z0-9]*             {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+[0-9]+\.[0-9]+[_a-zA-Z0-9\.]*                       {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+[0-9]*\.[0-9]+[_a-zA-Z0-9\.]*                       {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
+[0-9]+\.[0-9]*[_a-zA-Z0-9\.]*                       {fprintf(stderr,"\nError Invalid Token on line %d : %s",mylineno,yytext);; return ERROR;}
 
 
 
-%%       
-
+%%      
