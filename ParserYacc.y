@@ -147,13 +147,25 @@
     Declaration_: datatype IdentifierList_ SEMI_COLON {printf("declaration normal\n  ");}
                 | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("constant declaration\n ");}
                 |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON
-                |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrVal_ CLOSED_BRACE SEMI_COLON
-                |IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL AllVals_ SEMI_COLON
+                |datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON
+                |ArrayList_ EQUAL ArrVal_ SEMI_COLON
                 ;
-   ArrVal_: ArrVal_ COMMA AllVals_
-   |AllVals_
+
+ArrIndex_: INTVALUE
+|IDENTIFIER
+;
+ArrayListVal_: ArrayListVal_ COMMA  ArrVal_
+                | ArrVal_
+
+   ArrVal_: AllVals_
+   | FnCall_
+   |IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
    ;
 
+ArrayList_: IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
+       
+        | ArrayList_ COMMA IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
+        ;
     datatype : INT {printf("Data Type");}
 			  | FLOAT 
 			  | STRING 
@@ -169,7 +181,7 @@
     Assignment_: IDENTIFIER EQUAL Expr_ {printf("assignment expr \n");}
               | IDENTIFIER EQUAL Expr2_
               |IDENTIFIER EQUAL FnCall_
-              |IDENTIFIER EQUAL IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
+              |IDENTIFIER EQUAL IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
               
             ;
 
