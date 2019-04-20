@@ -84,9 +84,9 @@
                 ;
 
         FnCallArgs_: FnCallArgs_ COMMA AllVals_
-        |FnCallArgs_ COMMA IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
+        |FnCallArgs_ COMMA IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
            | AllVals_
-           |IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET
+           |IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
            ;  
          
 

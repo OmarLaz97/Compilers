@@ -5,7 +5,7 @@ void Fn1 (gomla s, 3ayem secondarg, rakam arr[]){
     ar[7], arr[3]=7;
     fn(3, 5);
 
-    fn(3, arr[0]);
+    fn(3, arr[i]);
     //rakam x++;
     x++;
     x+=6;
