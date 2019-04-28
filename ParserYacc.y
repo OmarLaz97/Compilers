@@ -67,17 +67,15 @@
                  ;
 
         FnDeclaration_: VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
                       | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
                       | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
                       | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
- 		      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}		
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");} 
- 		      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ RETURN IDENTIFIER SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}		
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");} 
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
                       ;  
 
         FnArgs_: datatype IDENTIFIER COMMA FnArgs_
@@ -111,8 +109,6 @@
              | Expr2_ SEMI_COLON
              | Body_ IfStmt_
              | IfStmt_
-             | Body_ IfRtnZero_
-             | IfRtnZero_
              | Body_ WhileStmt_
              | WhileStmt_
              | Body_ ForStmt_
@@ -123,6 +119,8 @@
              | SwitchStmt_
              | Body_ COMMENT
              | COMMENT
+             | Body_ RETURN SEMI_COLON
+             | RETURN SEMI_COLON
              ;
 
         BodyRtn_: BodyRtn_  Declaration_  
@@ -133,20 +131,20 @@
                 | FnCall_ SEMI_COLON
                 | BodyRtn_ Expr2_ SEMI_COLON
                 | Expr2_ SEMI_COLON
-                | BodyRtn_ IfStmt_
-                | IfStmt_
                 | BodyRtn_ IfRtn_
                 | IfRtn_
-                | BodyRtn_ WhileStmt_
-                | WhileStmt_
-                | BodyRtn_ ForStmt_
-                | ForStmt_
-                | BodyRtn_ DoWhileStmt_
-                | DoWhileStmt_
+                | BodyRtn_ WhileStmtRtn_
+                | WhileStmtRtn_
+                | BodyRtn_ ForStmtRtn_
+                | ForStmtRtn_
+                | BodyRtn_ DoWhileStmtRtn_
+                | DoWhileStmtRtn_
                 | BodyRtn_ SwitchStmt_
                 | SwitchStmt_
                 | BodyRtn_ COMMENT
                 | COMMENT
+                | BodyRtn_ RETURN AllVals_ SEMI_COLON
+                | RETURN AllVals_ SEMI_COLON
                 ;
 
         Declaration_: datatype IdentifierList_ SEMI_COLON {printf("\nValid Declaration");}
@@ -156,7 +154,7 @@
                     | ArrayList_ EQUAL ArrVal_ SEMI_COLON {printf("\nValid Array Declaration");}
                     ;
 
-        ArrIndex_: INTVALUE | IDENTIFIER
+        ArrIndex_: INTVALUE | IDENTIFIER 
                  ;
 
         ArrayListVal_: ArrayListVal_ COMMA  ArrVal_ | ArrVal_
@@ -236,57 +234,92 @@
                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}
                ;
 
-        IfRtnZero_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}   
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE IfRtnZero_ {printf("\nValid If Statement");}   
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfRtnZero_ {printf("\nValid If Statement");} 
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}  
-                  | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid If Statement");}  
-                  ;
+        IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE {printf("\nValid If Statement");}
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE ELSE OPENED_BRACE BodyRtn_ CLOSED_BRACE {printf("\nValid If Statement");}
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE ELSE IfRtn_ {printf("\nValid If Statement");}
+              ;    
 
-        IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE IfRtn_ {printf("\nValid If Statement");} 
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfRtn_ {printf("\nValid If Statement");}
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid If Statement");}               
-              ;
+       IfBreak_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE ELSE OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");} 
+                ;  
 
-        IfBreak_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid If Statement");}               
-                
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ CLOSED_BRACE ELSE OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ IfBreak_ CLOSED_BRACE {printf("\nValid If Statement");}               
-                
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-                
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ BREAK SEMI_COLON CLOSED_BRACE ELSE OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");} 
-                | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ IfBreak_ CLOSED_BRACE ELSE OPENED_BRACE Body_ BREAK SEMI_COLON CLOSED_BRACE {printf("\nValid If Statement");}
-                ;     
+      
+       IfBreakRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE ELSE OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE ELSE IfBreakRtn_ {printf("\nValid If Statement");} 
+               ;             
         
-        BodyLoop_: Body_ | IfBreak_ | IfBreak_ BodyLoop_ | Body_ IfBreak_
-                 ;
+        BodyLoop_: BodyLoop_  Declaration_  
+             | Declaration_
+             | BodyLoop_ Assignment_ SEMI_COLON
+             | Assignment_ SEMI_COLON
+             | BodyLoop_ FnCall_ SEMI_COLON
+             | FnCall_ SEMI_COLON
+             | BodyLoop_ Expr2_ SEMI_COLON
+             | Expr2_ SEMI_COLON
+             
+             | BodyLoop_ WhileStmt_
+             | WhileStmt_
+             | BodyLoop_ ForStmt_
+             | ForStmt_
+             | BodyLoop_ DoWhileStmt_
+             | DoWhileStmt_
+             | BodyLoop_ SwitchStmt_
+             | SwitchStmt_
+             | BodyLoop_ COMMENT
+             | COMMENT
+             | BodyLoop_ RETURN SEMI_COLON
+             | RETURN SEMI_COLON
+             | BodyLoop_ BREAK SEMI_COLON
+             | BREAK SEMI_COLON
+             | BodyLoop_ IfBreak_
+             | IfBreak_
+             ;
+
+       BodyLoopRtn_: BodyLoopRtn_  Declaration_  
+                | Declaration_
+                | BodyLoopRtn_ Assignment_ SEMI_COLON
+                | Assignment_ SEMI_COLON
+                | BodyLoopRtn_ FnCall_ SEMI_COLON
+                | FnCall_ SEMI_COLON
+                | BodyLoopRtn_ Expr2_ SEMI_COLON
+                | Expr2_ SEMI_COLON
+                
+                | BodyLoopRtn_ WhileStmtRtn_
+                | WhileStmtRtn_
+                | BodyLoopRtn_ ForStmtRtn_
+                | ForStmtRtn_
+                | BodyLoopRtn_ DoWhileStmtRtn_
+                | DoWhileStmtRtn_
+                | BodyLoopRtn_ SwitchStmt_
+                | SwitchStmt_
+                | BodyLoopRtn_ COMMENT
+                | COMMENT
+                | BodyLoopRtn_ RETURN AllVals_ SEMI_COLON
+                | RETURN AllVals_ SEMI_COLON
+                | BodyLoopRtn_ BREAK SEMI_COLON
+                | BREAK SEMI_COLON
+                | BodyLoopRtn_ IfBreakRtn_
+                | IfBreakRtn_
+                ;         
 
         WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid While Statement");} 
                   | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
-                  ;    
+                  ; 
+
+       WhileStmtRtn_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid While Statement");} 
+                  | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
+                  ;
+
 
         ForStmt_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid For Statement");}
                 | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid For Statement");}
                 ;
+
+        ForStmtRtn_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid For Statement");}
+                | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid For Statement");}
+                ;        
 
         First_: Declaration_ | Assignment_ SEMI_COLON
               ;
@@ -300,7 +333,11 @@
 
         DoWhileStmt_: DO OPENED_BRACE BodyLoop_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
                     | DO OPENED_BRACE CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
-                    ;    
+                    ; 
+
+        DoWhileStmtRtn_: DO OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
+                    | DO OPENED_BRACE CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
+                    ;                
 
         SwitchStmt_: SWITCH OPENED_BRACKET IDENTIFIER CLOSED_BRACKET OPENED_BRACE CaseStmt_ CLOSED_BRACE {printf("\nValid Switch Statement");}   
                    ;

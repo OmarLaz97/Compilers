@@ -53,6 +53,23 @@ void Fn1 (gomla s, 3ayem secondarg, rakam arr[]){
 //function to return array
 3ayem [] Fn (){
     //test
+    //for loops
+    talama(w){
+        
+        law (!k){
+            //break test
+            law (l){
+                l++;
+                break;
+                return d;
+            }
+            law(o) {
+                //j
+                break;
+            }
+            break;
+        }
+    }
     return a;
 }
 //Function to return 3ayem, should have a return 
@@ -102,6 +119,7 @@ void fn3(){
 }
 
 void main(){
+    return;
     //beg of code
     law (k==0){
         l = p;
@@ -168,8 +186,7 @@ void main(){
         law (!k){
             //break test
             law (l){
-                //n
-                
+                l++;
             }
             law(o) {
                 //jj
