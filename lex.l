@@ -61,19 +61,19 @@ int mylineno = 1;
 "--"                                                return MINUS_MINUS;
 "="                                                 return EQUAL; 
 
-[0-9]+                                              return INTVALUE;
-[0-9]+\.[0-9]+                                      return FLOATVALUE;
-[0-9]*\.[0-9]+                                      return FLOATVALUE;
-[0-9]+\.[0-9]*		                                return FLOATVALUE;
-\".*\"                                              return STRINGVALUE;
-\'[a-zA-Z0-9]\'                                     return CHARVALUE;
+[0-9]+                                              {yylval.MyintValue= atoi(yytext);return INTVALUE;}
+[0-9]+\.[0-9]+                                      {yylval.MyfloatValue= atof(yytext); return FLOATVALUE;}
+[0-9]*\.[0-9]+                                      {yylval.MyfloatValue= atof(yytext); return FLOATVALUE;}
+[0-9]+\.[0-9]*		                                {yylval.MyfloatValue= atof(yytext); return FLOATVALUE;}
+\".*\"                                              {yylval.MystringValue = strdup(yytext); return STRINGVALUE;}
+\'[a-zA-Z0-9]\'                                     {yylval.MycharValue = strdup(yytext); return CHARVALUE;}
 True|False                                          return BOOLVALUE;
 \n {mylineno++;}
 [ \t] ;
-^[a-zA-Z][_a-zA-Z0-9]*                              return IDENTIFIER;
-[a-zA-Z][_a-zA-Z0-9]*                            return IDENTIFIER;
+^[a-zA-Z][_a-zA-Z0-9]*                              {yylval.Myidentifier = strdup(yytext); return IDENTIFIER;}
+[a-zA-Z][_a-zA-Z0-9]*                               {yylval.Myidentifier = strdup(yytext); return IDENTIFIER;}
 
-(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(\/\/.*)                                           return COMMENT;
+(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(\/\/.*)    {yylval.Mycomment = strdup(yytext); return COMMENT;}
 
 
 

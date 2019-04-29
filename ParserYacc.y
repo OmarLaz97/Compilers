@@ -1,27 +1,39 @@
 %{
   #include <stdio.h>
   #include <stdlib.h>
+  #include <stdarg.h>
+  #include <string.h>
+  #include "SymbolTable.c"
 
   int yylex();
   void yyerror(char *msg);
   extern int mylineno;
+
+
+  int Scope_= 0;
+  int MaxScope=0;
+  push(Scope_);
+
+  nodeType * IdenDetected(char *Name, int Type, int Scope);
 %}
 
 %union{
-    int intValue;	    /* integer value */
-	float floatValue;    /* float value */
-	char charValue;    /* char value */
-	char* stringValue;    /* string value*/
-	char* identifier;       /* identifier name */
-	char* comment;
+        int MyintValue;	    /* integer value */
+	float MyfloatValue;    /* float value */
+	char* MycharValue;    /* char value */
+	char* MystringValue;    /* string value*/
+	char* Myidentifier;       /* identifier name */
+	/*char* Myarrayidentifier;*/
+	char* Mycomment;
+	nodeType* nPtr;
 };
 
-%token <intValue> INTVALUE;
-%token <floatValue> FLOATVALUE;
-%token <charValue> CHARVALUE;
-%token <stringValue> STRINGVALUE;
-%token <comment> COMMENT;
-%token <identifier> IDENTIFIER;
+%token <MyintValue> INTVALUE;
+%token <MyfloatValue> FLOATVALUE;
+%token <MycharValue> CHARVALUE;
+%token <MystringValue> STRINGVALUE;
+%token <Mycomment> COMMENT;
+%token <Myidentifier> IDENTIFIER;
 %token CONSTANT INT FLOAT STRING CHAR BOOL IF THEN ELSE WHILE DO SWITCH CASE DEFAULT FOR AND OR EQUALEQUAL GREATERTHAN SMALLERTHAN GREATERTHANOREQUAL SMALLERTHANOREQUAL NOT NOTEQUAL VOID MAIN RETURN BOOLVALUE 
 %token SEMI_COLON OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA TWO_DOTS PLUS MINUS MULTIPLY DIVIDE REMAINDER PLUS_EQUAL MINUS_EQUAL MULTIPLY_EQUAL DIVIDE_EQUAL PLUS_PLUS MINUS_MINUS EQUAL
 %token ERROR BREAK
@@ -39,6 +51,9 @@
 %left SMALLERTHAN SMALLERTHANOREQUAL GREATERTHAN GREATERTHANOREQUAL
 %right NOT 
 
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_
+%type <MyintValue> datatype
+/*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
 %%
     /* Language BODY */
@@ -147,7 +162,11 @@
                 | RETURN AllVals_ SEMI_COLON
                 ;
 
-        Declaration_: datatype IdentifierList_ SEMI_COLON {printf("\nValid Declaration");}
+        Declaration_: datatype IdentifierList_ SEMI_COLON { printf("\nValid Declaration");    
+                $$ = IdenDetected($2, $1, Scope_);     
+        }
+
+
                     | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("\nValid Constant Declaration");}
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON {printf("\nValid Array Declaration");}
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON {printf("\nValid Array Declaration");}
@@ -169,14 +188,14 @@
                   | ArrayList_ COMMA IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET
                   ;
 
-        datatype: INT 
-		| FLOAT 
-		| STRING 
-		| CHAR 
-		| BOOL 
+        datatype: INT {$$ = 0;}
+		| FLOAT {$$ = 1;}
+		| STRING {$$ = 2;}
+		| CHAR {$$ = 3;}
+		| BOOL {$$ = 4;}
 		;            
 
-        IdentifierList_: IDENTIFIER  
+        IdentifierList_: IDENTIFIER  {$$= $1;}
                        | IDENTIFIER COMMA IdentifierList_ 
                        | Assignment_
                        ;
@@ -191,8 +210,8 @@
             | BOOLVALUE 
             ;
 
-        Number_: INTVALUE 
-               | FLOATVALUE 
+        Number_: INTVALUE /*{$$=$1;}*/
+               | FLOATVALUE /*{$$=$1;}*/
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS
@@ -205,7 +224,7 @@
               |IDENTIFIER DIVIDE_EQUAL Number_
               ;
 
-        Expr_: Logical_
+        Expr_: Logical_ /*{printf("result = %f\n", $1);}*/
              ;
 
         Logical_: Logical_ AND Math_
@@ -220,10 +239,14 @@
                 | Math_
                 ;
 
-        Math_: Math_ PLUS Term_ | Math_ MINUS Term_ | Term_
+        Math_: Math_ PLUS Term_ /*{$$= $1 + $3;*/
+             | Math_ MINUS Term_ /*{$$= $1 - $3;*/
+             | Term_ /*{$$= $1*/
              ;
 
-        Term_: Term_ MULTIPLY Factor_ | Term_ DIVIDE Factor_ | Factor_
+        Term_: Term_ MULTIPLY Factor_ /*{$$= $1 * $3;*/
+             | Term_ DIVIDE Factor_ /*{if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;*/
+             | Factor_ /*{$$= $1;*/
              ;
 
         Factor_: IDENTIFIER | Val_ | Number_ | OPENED_BRACKET Logical_ CLOSED_BRACKET 
@@ -304,9 +327,15 @@
                 | IfBreakRtn_
                 ;         
 
-        WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid While Statement");} 
+        WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ {printf("\nValid While Statement");} 
                   | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
                   ; 
+
+        OpenedBrace_: OPENED_BRACE {MaxScope++; Scope_= MaxScope; push(MaxScope);}
+                    ;
+
+        ClosedBrace_: CLOSED_BRACE {pop(); Scope_= peek();}
+                    ;                      
 
        WhileStmtRtn_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid While Statement");} 
                   | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
@@ -367,6 +396,8 @@
 
 int main(){
   yyparse();
+
+  PrintSymbolTable();
   return yylex();
 }
 
@@ -380,3 +411,15 @@ void yyerror(char *msg){
 }
 
 
+nodeType * IdenDetected(char *Name, int Type, int Scope){
+        
+
+        printf("type=");   
+        
+
+        struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
+        temp->Sym_Name = Name;
+        temp->Sym_Type = Type;
+        temp->Sym_Scope = Scope;
+        InsertTable(temp);
+}
