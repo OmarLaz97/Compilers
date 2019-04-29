@@ -25,6 +25,8 @@ struct SymbolInfo {
     int Sym_Type;
     int Sym_Scope;
     union Value Sym_Value;
+    int Sym_Perm;
+    bool Sym_Init;
 
     struct SymbolInfo *Next;
 }*HashTable[HASH_SIZE];
@@ -149,7 +151,7 @@ void PrintSymbolTable(){
 
         struct SymbolInfo *temp= HashTable[HashIndex];
         while (temp != NULL){
-            printf("Name= %s    Type=%d     Scope=%d        Value= %d\n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope, temp->Sym_Value);
+            printf("Name= %s    Type=%d     Scope=%d        Value= %d       Permission= %d      Initi= %d\n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope, temp->Sym_Value, temp->Sym_Perm, temp->Sym_Init);
             temp= temp->Next;
         }
         printf("\n\n"); 
@@ -197,8 +199,17 @@ bool UpdateHash(char *Name, int Type, int Scope, union Value newVal){
     if (symbolEntry == NULL)
         return false;
 
-    symbolEntry->Sym_Value = newVal;
-    return true;
+    if (symbolEntry->Sym_Perm == 1 && symbolEntry->Sym_Init == false) {//is const and not assigned before
+        symbolEntry->Sym_Value = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    else if (symbolEntry->Sym_Perm != 1){//not const
+        symbolEntry->Sym_Value = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    return false;    
 }
 
 bool UpdateHash2(char *Name, int Scope, int newVal){
@@ -206,8 +217,17 @@ bool UpdateHash2(char *Name, int Scope, int newVal){
     if (symbolEntry == NULL)
         return false;
 
-    symbolEntry->Sym_Value.MyintValue = newVal;
-    return true;
+    if (symbolEntry->Sym_Perm == 1  && symbolEntry->Sym_Init == false) {//is const and not assigned before
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    else if (symbolEntry->Sym_Perm != 1){
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    return false;
 }
 
 bool UpdateHash3(char *Name, int newVal){
@@ -215,8 +235,26 @@ bool UpdateHash3(char *Name, int newVal){
     if (symbolEntry == NULL)
         return false;
 
-    symbolEntry->Sym_Value.MyintValue = newVal;
-    return true;
+    if (symbolEntry->Sym_Perm == 1  && symbolEntry->Sym_Init == false) {//is const and not assigned before
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    else if (symbolEntry->Sym_Perm != 1){
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    return false;
+    
+}
+
+int checkPerm(char *Name){
+    struct SymbolInfo *symbolEntry = SearchByName(Name);
+    if (symbolEntry == NULL)
+        return -1;
+
+    return symbolEntry->Sym_Perm;
 }
 
 /*

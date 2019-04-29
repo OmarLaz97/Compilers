@@ -9,13 +9,16 @@
   void yyerror(char *msg);
   extern int mylineno;
 
+  int NumberIdent=0;
+  char *IDs[10];
 
   int Scope_= 0;
   int MaxScope=0;
   push(Scope_);
 
-  nodeType * IdenDetected(char *Name, int Type, int Scope);
+  nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
+  
 %}
 
 %union{
@@ -164,12 +167,8 @@
                 | RETURN AllVals_ SEMI_COLON
                 ;
 
-        Declaration_: datatype IdentifierList_ SEMI_COLON { printf("\nValid Declaration");    
-                $$ = IdenDetected($2, $1, Scope_);     
-        }
-
-
-                    | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("\nValid Constant Declaration");}
+        Declaration_: datatype IdentifierList_ SEMI_COLON { printf("\nValid Declaration"); $$ = IdenDetected(IDs, $1, Scope_,NumberIdent, 0); NumberIdent=0;}
+                    | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("\nValid Constant Declaration"); $$ = IdenDetected(IDs, $2, Scope_,NumberIdent, 1); NumberIdent=0;}
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON {printf("\nValid Array Declaration");}
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON {printf("\nValid Array Declaration");}
                     | ArrayList_ EQUAL ArrVal_ SEMI_COLON {printf("\nValid Array Declaration");}
@@ -197,9 +196,9 @@
 		| BOOL {$$ = 4;}
 		;            
 
-        IdentifierList_: IDENTIFIER  {$$= $1;}
-                       | IDENTIFIER COMMA IdentifierList_ 
-                       | Assignment_
+        IdentifierList_: IDENTIFIER  {IDs[NumberIdent] = $1; NumberIdent++; $$= $1;}
+                       | IDENTIFIER COMMA IdentifierList_ {IDs[NumberIdent] = $1;NumberIdent++; $$=$1;}
+                       | Assignment_ {$$=$1;}
                        ;
 
         Assignment_: IDENTIFIER EQUAL Expr_ {$$= Assign($1, $3);}
@@ -413,21 +412,31 @@ void yyerror(char *msg){
 }
 
 
-nodeType * IdenDetected(char *Name, int Type, int Scope){
-        if (AlreadyDeclaredInScope(Name,Scope)!=NULL){
-                printf("\nIdentifier with name %s on line %d is already defined in this scope",Name, mylineno);
+nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
+        printf("Num = %d ", Num);
+        printf(a[0]);
+
+        for (int i=0; i<Num; i++){
+                if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
+                printf("\nIdentifier with name %s on line %d is already defined in this scope",a[i], mylineno);
                 exit(1);
-        }
+                }
 
         
-        struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
-        temp->Sym_Name = Name;
-        temp->Sym_Type = Type;
-        temp->Sym_Scope = Scope;
-        if (!InsertTable(temp)){
-                printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",Name, mylineno);
-                exit(1);
+                struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
+                temp->Sym_Name = a[i];
+                temp->Sym_Type = Type;
+                temp->Sym_Scope = Scope;
+                temp->Sym_Perm = Per;
+                temp->Sym_Init = false;
+
+                printf ("temp name %s", a[i]);
+                if (!InsertTable(temp)){
+                        printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",a[i], mylineno);
+                        exit(1);
+                }
         }
+        
 }
 
 nodeType * Assign(char* Name, int newValue){;

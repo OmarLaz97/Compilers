@@ -1,31 +1,3 @@
 void main(){
-    3ayem g;
-
-    talama(k){
-        3ayem l;
-    }
-
-    talama(l){
-        3ayem s;
-        s=33;
-        s=55;
-    }
-
-    law (r){
-        rakam d;
-        law (p){
-            rakam d;
-            g=9;
-        }
-
-        rakam gg;
-    }
-
-    law (o){
-        law (k){
-            3ayem g;
-            g=0;
-        }
-    }
-    
+    3ayem Mirna = 0;
 }

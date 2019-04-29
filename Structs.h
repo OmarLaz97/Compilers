@@ -1,8 +1,9 @@
 typedef enum {Const_Type, Identifier_Type, Opr_Type} NodeEnum;
 typedef enum {isInteger, isFloat, isChar, isString} TypeEnum;
-typedef enum {NotDeclared, isConst, Declared} PermissionEnum;
+/*typedef enum {NotDeclared, isConst, Declared} PermissionEnum;*/
+typedef enum {Accepted, isConst} PermissionEnum;
 
-/* Node for Constants */
+/* Node for Constants const int x*/
 typedef struct {
     TypeEnum ConstType;
     char *Value;
@@ -10,7 +11,7 @@ typedef struct {
 
 /* Node for Identifiers */
 typedef struct {
-    int SymIndex;
+    /*int SymIndex;*/
     TypeEnum IdentiType;
     PermissionEnum IdentPermission;
     char *IdentName;
