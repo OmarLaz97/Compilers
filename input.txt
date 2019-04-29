@@ -7,7 +7,25 @@ void main(){
 
     talama(l){
         3ayem s;
+        s=33;
+        s=55;
     }
 
-    rakam s;
+    law (r){
+        rakam d;
+        law (p){
+            rakam d;
+            g=9;
+        }
+
+        rakam gg;
+    }
+
+    law (o){
+        law (k){
+            3ayem g;
+            g=0;
+        }
+    }
+    
 }

@@ -43,7 +43,7 @@ int HashFun(char *Name){
 
 //Search Hash Table to check whether the exact info exists before or not
 //that is return true only if a symbol having the same name, same type, same scope exists
-bool SearchTable(char *Name, int Type, int Scope){
+struct SymbolInfo * SearchTable(char *Name, int Type, int Scope){
     //get index
     int HashIndex = HashFun(Name);
 
@@ -52,18 +52,47 @@ bool SearchTable(char *Name, int Type, int Scope){
     //strcmp compares 2 strings (2 *char) and return 0 if they are identical
     while (symbolEntry != NULL){
         if (!strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Type==Type && symbolEntry->Sym_Scope == Scope){
-            return true; //found
+            return symbolEntry; //found
         }
         symbolEntry = symbolEntry->Next;  
     }
 
-     return false; //not found
+     return NULL; //not found
+}
+
+//Search Symbol Table to check whether a name is already declared in the same scope
+struct SymbolInfo * AlreadyDeclaredInScope(char *Name, int Scope){
+    int HashIndex = HashFun(Name);
+    struct SymbolInfo *symbolEntry = HashTable[HashIndex];
+
+    while (symbolEntry != NULL){
+        if (!strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Scope == Scope){
+            return symbolEntry; //found
+        }
+    symbolEntry = symbolEntry->Next;  
+    }
+
+     return NULL; //not found
+}
+
+//return symbol having name with most recent scope
+struct SymbolInfo * SearchByName(char *Name){
+    int HashIndex = HashFun(Name);
+    struct SymbolInfo *symbolEntry = HashTable[HashIndex];
+
+    while (symbolEntry != NULL){
+        if (!strcmp(symbolEntry->Sym_Name, Name)){
+            return symbolEntry; //found
+        }
+    symbolEntry = symbolEntry->Next;  
+    }
+
+     return NULL; //not found
 }
 
 //insert in hash table, return false if insertion failed as the symbol already exists
 //or return true if insertion was successful
 bool InsertTable(struct SymbolInfo *newEntry){
-    printf("GOWA INSERT");
     char *newName = newEntry->Sym_Name;
     int index= HashFun(newName);
 
@@ -120,13 +149,75 @@ void PrintSymbolTable(){
 
         struct SymbolInfo *temp= HashTable[HashIndex];
         while (temp != NULL){
-            printf("Name= %s    Type=%d     Scope=%d \n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope);
+            printf("Name= %s    Type=%d     Scope=%d        Value= %d\n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope, temp->Sym_Value);
             temp= temp->Next;
         }
         printf("\n\n"); 
     }
 }
 
+bool DeleteHash(char *Name, int Type, int Scope){
+    int HashIndex = HashFun(Name);
+    struct SymbolInfo *symbolEntry = HashTable[HashIndex];
+    if (symbolEntry == NULL) //not found
+        return false;
+
+    //found at head and has no next
+    if (symbolEntry->Next == NULL && !strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Type== Type && symbolEntry->Sym_Scope == Scope){
+        free(symbolEntry);
+        HashTable[HashIndex] = NULL;
+    }
+    //at head and has followers
+    else if (!strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Type== Type && symbolEntry->Sym_Scope == Scope){
+        HashTable[HashIndex] = symbolEntry->Next;
+        free(symbolEntry);
+    }
+    else {
+        //not found at head, search in chain
+        while (symbolEntry->Next != NULL){
+            if (!strcmp(symbolEntry->Next->Sym_Name, Name) && symbolEntry->Next->Sym_Type== Type && symbolEntry->Next->Sym_Scope == Scope){
+                //found
+                break;
+            }
+            symbolEntry = symbolEntry->Next;    
+        }
+    }
+
+    if (symbolEntry != NULL){
+        struct SymbolInfo * found = symbolEntry->Next;
+        symbolEntry->Next = found->Next;
+        free(found);
+        return true;
+    }
+    return false;         
+}
+
+bool UpdateHash(char *Name, int Type, int Scope, union Value newVal){
+    struct SymbolInfo *symbolEntry = SearchTable(Name, Type, Scope);
+    if (symbolEntry == NULL)
+        return false;
+
+    symbolEntry->Sym_Value = newVal;
+    return true;
+}
+
+bool UpdateHash2(char *Name, int Scope, int newVal){
+    struct SymbolInfo *symbolEntry = AlreadyDeclaredInScope(Name, Scope);
+    if (symbolEntry == NULL)
+        return false;
+
+    symbolEntry->Sym_Value.MyintValue = newVal;
+    return true;
+}
+
+bool UpdateHash3(char *Name, int newVal){
+    struct SymbolInfo *symbolEntry = SearchByName(Name);
+    if (symbolEntry == NULL)
+        return false;
+
+    symbolEntry->Sym_Value.MyintValue = newVal;
+    return true;
+}
 
 /*
 int main(){

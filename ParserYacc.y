@@ -15,6 +15,7 @@
   push(Scope_);
 
   nodeType * IdenDetected(char *Name, int Type, int Scope);
+  nodeType * Assign(char* Name, int newValue);
 %}
 
 %union{
@@ -51,7 +52,8 @@
 %left SMALLERTHAN SMALLERTHANOREQUAL GREATERTHAN GREATERTHANOREQUAL
 %right NOT 
 
-%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_
+%type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_ 
 %type <MyintValue> datatype
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
@@ -200,7 +202,7 @@
                        | Assignment_
                        ;
 
-        Assignment_: IDENTIFIER EQUAL Expr_ 
+        Assignment_: IDENTIFIER EQUAL Expr_ {$$= Assign($1, $3);}
                    | IDENTIFIER EQUAL Expr2_
                    |IDENTIFIER EQUAL FnCall_
                    ;
@@ -210,7 +212,7 @@
             | BOOLVALUE 
             ;
 
-        Number_: INTVALUE /*{$$=$1;}*/
+        Number_: INTVALUE {$$=$1;}
                | FLOATVALUE /*{$$=$1;}*/
                ;
 
@@ -224,7 +226,7 @@
               |IDENTIFIER DIVIDE_EQUAL Number_
               ;
 
-        Expr_: Logical_ /*{printf("result = %f\n", $1);}*/
+        Expr_: Logical_ {$$=$1;}/*{printf("result = %f\n", $1);}*/
              ;
 
         Logical_: Logical_ AND Math_
@@ -236,41 +238,41 @@
                 | Logical_ EQUALEQUAL Math_
                 | Logical_ NOTEQUAL Math_
                 | NOT Math_
-                | Math_
+                | Math_ {$$=$1;}
                 ;
 
         Math_: Math_ PLUS Term_ /*{$$= $1 + $3;*/
              | Math_ MINUS Term_ /*{$$= $1 - $3;*/
-             | Term_ /*{$$= $1*/
+             | Term_ {$$=$1;}
              ;
 
         Term_: Term_ MULTIPLY Factor_ /*{$$= $1 * $3;*/
              | Term_ DIVIDE Factor_ /*{if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;*/
-             | Factor_ /*{$$= $1;*/
+             | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER | Val_ | Number_ | OPENED_BRACKET Logical_ CLOSED_BRACKET 
+        Factor_: IDENTIFIER | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
-        IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid If Statement");}
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid If Statement");}
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE ELSE IfStmt_ {printf("\nValid If Statement");}
+        IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ ELSE OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ ELSE IfStmt_ {printf("\nValid If Statement");}
                ;
 
-        IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE {printf("\nValid If Statement");}
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE ELSE OPENED_BRACE BodyRtn_ CLOSED_BRACE {printf("\nValid If Statement");}
-              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ CLOSED_BRACE ELSE IfRtn_ {printf("\nValid If Statement");}
+        IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyRtn_ ClosedBrace_ {printf("\nValid If Statement");}
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyRtn_ ClosedBrace_ ELSE OpenedBrace_ BodyRtn_ ClosedBrace_ {printf("\nValid If Statement");}
+              | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyRtn_ ClosedBrace_ ELSE IfRtn_ {printf("\nValid If Statement");}
               ;    
 
-       IfBreak_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid If Statement");} 
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE ELSE OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid If Statement");} 
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE ELSE IfBreak_ {printf("\nValid If Statement");} 
+       IfBreak_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ ELSE OpenedBrace_ BodyLoop_ ClosedBrace_ {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ ELSE IfBreak_ {printf("\nValid If Statement");} 
                 ;  
 
       
-       IfBreakRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid If Statement");} 
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE ELSE OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid If Statement");} 
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE ELSE IfBreakRtn_ {printf("\nValid If Statement");} 
+       IfBreakRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ ELSE OpenedBrace_ BodyLoopRtn_ ClosedBrace_ {printf("\nValid If Statement");} 
+               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ ELSE IfBreakRtn_ {printf("\nValid If Statement");} 
                ;             
         
         BodyLoop_: BodyLoop_  Declaration_  
@@ -328,7 +330,7 @@
                 ;         
 
         WhileStmt_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ {printf("\nValid While Statement");} 
-                  | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
+                  | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid While Statement");} 
                   ; 
 
         OpenedBrace_: OPENED_BRACE {MaxScope++; Scope_= MaxScope; push(MaxScope);}
@@ -337,17 +339,17 @@
         ClosedBrace_: CLOSED_BRACE {pop(); Scope_= peek();}
                     ;                      
 
-       WhileStmtRtn_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid While Statement");} 
-                  | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid While Statement");} 
+       WhileStmtRtn_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ {printf("\nValid While Statement");} 
+                  | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid While Statement");} 
                   ;
 
 
-        ForStmt_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE BodyLoop_ CLOSED_BRACE {printf("\nValid For Statement");}
-                | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid For Statement");}
+        ForStmt_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OpenedBrace_ BodyLoop_ ClosedBrace_ {printf("\nValid For Statement");}
+                | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid For Statement");}
                 ;
 
-        ForStmtRtn_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE {printf("\nValid For Statement");}
-                | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid For Statement");}
+        ForStmtRtn_: FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ {printf("\nValid For Statement");}
+                | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid For Statement");}
                 ;        
 
         First_: Declaration_ | Assignment_ SEMI_COLON
@@ -360,12 +362,12 @@
               |Expr2_
               ;   
 
-        DoWhileStmt_: DO OPENED_BRACE BodyLoop_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
-                    | DO OPENED_BRACE CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
+        DoWhileStmt_: DO OpenedBrace_ BodyLoop_ ClosedBrace_ WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
+                    | DO OpenedBrace_ ClosedBrace_ WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
                     ; 
 
-        DoWhileStmtRtn_: DO OPENED_BRACE BodyLoopRtn_ CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
-                    | DO OPENED_BRACE CLOSED_BRACE WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
+        DoWhileStmtRtn_: DO OpenedBrace_ BodyLoopRtn_ ClosedBrace_ WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}
+                    | DO OpenedBrace_ ClosedBrace_ WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET SEMI_COLON {printf("\nValid Do while Statement");}   
                     ;                
 
         SwitchStmt_: SWITCH OPENED_BRACKET IDENTIFIER CLOSED_BRACKET OPENED_BRACE CaseStmt_ CLOSED_BRACE {printf("\nValid Switch Statement");}   
@@ -412,14 +414,25 @@ void yyerror(char *msg){
 
 
 nodeType * IdenDetected(char *Name, int Type, int Scope){
-        
+        if (AlreadyDeclaredInScope(Name,Scope)!=NULL){
+                printf("\nIdentifier with name %s on line %d is already defined in this scope",Name, mylineno);
+                exit(1);
+        }
 
-        printf("type=");   
         
-
         struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
         temp->Sym_Name = Name;
         temp->Sym_Type = Type;
         temp->Sym_Scope = Scope;
-        InsertTable(temp);
+        if (!InsertTable(temp)){
+                printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",Name, mylineno);
+                exit(1);
+        }
+}
+
+nodeType * Assign(char* Name, int newValue){;
+        if(!UpdateHash3(Name, newValue)){
+                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(1);  
+        }
 }
