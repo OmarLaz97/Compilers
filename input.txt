@@ -1,3 +1,20 @@
 void main(){
-    3ayem Mirna = 0;
+    rakam x, y;
+
+    sabet rakam g=0;
+    sabet rakam laz=33;
+    
+    law(p){
+        sabet 3ayem laz;
+        laz = 55;
+        
+        //laz=99;
+        rakam maram= 77;
+        //rakam maram;
+    }
+
+    //hena hasteshtaghal for testing bas, 3ashan mesh bamsah men el symbol table 3ashan yeb2a kol haga bayna
+    //fa hayshuf en maram already defined f scope adim ma3 en el scope da kheles
+    maram=0;
+
 }

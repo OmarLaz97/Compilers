@@ -12,12 +12,16 @@
   int NumberIdent=0;
   char *IDs[10];
 
+ struct SymbolInfo * TestSymbol = NULL;
+  struct SymbolInfo * FounSymbol = NULL;
+
   int Scope_= 0;
   int MaxScope=0;
   push(Scope_);
 
   nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
+  nodeType *Test(char* Name, int Per, int Type);
   
 %}
 
@@ -120,14 +124,66 @@
              ;
 
         Body_: Body_  Declaration_  
-             | Declaration_
-             | Body_ Assignment_ SEMI_COLON
-             | Assignment_ SEMI_COLON
+             | Declaration_ 
+             | Body_ Assignment_ SEMI_COLON {
+                        if (TestSymbol != NULL){ //undeclared virtual p=0;
+                             if (FounSymbol != NULL){ //previously declared
+                                        printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
+                                        if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
+                                                printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
+                                                exit(1);
+                                        }
+                                        else{
+                                                FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
+                                                FounSymbol->Sym_Init = TestSymbol->Sym_Init;
+                                                Delete(TestSymbol);
+                                                TestSymbol = NULL; 
+                                                NumberIdent=0;
+                                                FounSymbol = NULL;
+                                        }
+                             }
+                             else { //not declared at all
+                                printf("Symbol with name %s on line %d not declared", TestSymbol->Sym_Name, mylineno); 
+                                Delete(TestSymbol);
+                                TestSymbol = NULL; 
+                                NumberIdent=0;
+                                exit(1);
+                             }
+                             
+                        }
+                }
+             
+             | Assignment_ SEMI_COLON {
+                        if (TestSymbol != NULL){ //undeclared virtual p=0;
+                                if (FounSymbol != NULL){ //previously declared
+                                        printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
+                                        if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
+                                                printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
+                                                exit(1);
+                                        }
+                                        else{
+                                                FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
+                                                FounSymbol->Sym_Init = TestSymbol->Sym_Init;
+                                                Delete(TestSymbol);
+                                                TestSymbol = NULL; 
+                                                NumberIdent=0;
+                                                FounSymbol = NULL;
+                                        }        
+                             }
+                             else { //not declared at all
+                                printf("Symbol with name %s on line %d not declared", TestSymbol->Sym_Name, mylineno); 
+                                Delete(TestSymbol);
+                                TestSymbol = NULL; 
+                                NumberIdent=0;
+                                exit(1);
+                             }
+                        }
+                }
              | Body_ FnCall_ SEMI_COLON
              | FnCall_ SEMI_COLON
              | Body_ Expr2_ SEMI_COLON
              | Expr2_ SEMI_COLON
-             | Body_ IfStmt_
+             | Body_ IfStmt_ 
              | IfStmt_
              | Body_ WhileStmt_
              | WhileStmt_
@@ -167,8 +223,57 @@
                 | RETURN AllVals_ SEMI_COLON
                 ;
 
-        Declaration_: datatype IdentifierList_ SEMI_COLON { printf("\nValid Declaration"); $$ = IdenDetected(IDs, $1, Scope_,NumberIdent, 0); NumberIdent=0;}
-                    | CONSTANT datatype IdentifierList_ SEMI_COLON {printf("\nValid Constant Declaration"); $$ = IdenDetected(IDs, $2, Scope_,NumberIdent, 1); NumberIdent=0;}
+        Declaration_: datatype IdentifierList_ SEMI_COLON { 
+                                                if(TestSymbol == NULL) { //no virtual is created
+                                                        $$ = IdenDetected(IDs, $1, Scope_,NumberIdent, 0); 
+                                                        TestSymbol = NULL;
+                                                        NumberIdent=0;
+                                                }
+                                                else { //fih virtual, fi assignmnett
+                                                        if (FounSymbol == NULL){ //not found before
+                                                                $$ = Test(IDs[0], 0, $1);
+                                                                TestSymbol = NULL;
+                                                                NumberIdent=0;
+                                                        }
+                                                        else { //found before
+                                                                if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
+                                                                printf("Already declared in same scope\n");
+                                                                exit(1);
+                                                                }
+                                                                //not same scope
+                                                                $$ = Test(IDs[0], 0, $1);
+                                                                TestSymbol = NULL;
+                                                                NumberIdent=0;
+                                                        }
+                                                }
+                                                        printf("\nValid Declaration");
+                                                }
+                    | CONSTANT datatype IdentifierList_ SEMI_COLON { 
+                                                if(TestSymbol == NULL) { //no virtual is created
+                                                        $$ = IdenDetected(IDs, $2, Scope_,NumberIdent, 1); 
+                                                        TestSymbol = NULL;
+                                                        NumberIdent=0;
+                                                }
+                                                else { //fih virtual, fi assignmnett
+                                                        if (FounSymbol == NULL){
+                                                                $$ = Test(IDs[0], 1, $2);
+                                                                TestSymbol = NULL;
+                                                                NumberIdent=0;
+                                                        }
+                                                        else {
+                                                                if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
+                                                                printf("Declared in same scope");
+                                                                exit(1);
+                                                                }
+                                                                //not same scope
+                                                                $$ = Test(IDs[0], 1, $2);
+                                                                TestSymbol = NULL;
+                                                                NumberIdent=0;
+                                                        } 
+                                                }
+                                                        printf("\nValid Declaration");
+                                                }
+                                        
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET SEMI_COLON {printf("\nValid Array Declaration");}
                     | datatype IDENTIFIER OPENED_SQ_BRACKET INTVALUE CLOSED_SQ_BRACKET EQUAL OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON {printf("\nValid Array Declaration");}
                     | ArrayList_ EQUAL ArrVal_ SEMI_COLON {printf("\nValid Array Declaration");}
@@ -201,7 +306,7 @@
                        | Assignment_ {$$=$1;}
                        ;
 
-        Assignment_: IDENTIFIER EQUAL Expr_ {$$= Assign($1, $3);}
+        Assignment_: IDENTIFIER EQUAL Expr_ {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}
                    | IDENTIFIER EQUAL Expr2_
                    |IDENTIFIER EQUAL FnCall_
                    ;
@@ -413,16 +518,12 @@ void yyerror(char *msg){
 
 
 nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
-        printf("Num = %d ", Num);
-        printf(a[0]);
-
         for (int i=0; i<Num; i++){
                 if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
                 printf("\nIdentifier with name %s on line %d is already defined in this scope",a[i], mylineno);
                 exit(1);
                 }
 
-        
                 struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
                 temp->Sym_Name = a[i];
                 temp->Sym_Type = Type;
@@ -430,7 +531,6 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
                 temp->Sym_Perm = Per;
                 temp->Sym_Init = false;
 
-                printf ("temp name %s", a[i]);
                 if (!InsertTable(temp)){
                         printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",a[i], mylineno);
                         exit(1);
@@ -439,9 +539,28 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
         
 }
 
-nodeType * Assign(char* Name, int newValue){;
-        if(!UpdateHash3(Name, newValue)){
-                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
-                exit(1);  
+nodeType *Test(char* Name, int Per, int Type){
+        UpdatePermAndType(Name, Per, Type);
+}
+
+nodeType * Assign(char* Name, int newValue){
+        bool Found= false;
+        struct SymbolInfo * Virtual = NULL;
+        struct SymbolInfo * temp= UpdateAnyway(Name, newValue, &Found, Scope_, &Virtual);
+        
+        //temp is null if not Found
+        //temp != null if found in this/previous scope
+
+        if (Found == false){
+                TestSymbol = Virtual; 
+                FounSymbol = temp; //NULL
+        }
+        else if (Found && temp != NULL && temp->Sym_Perm == 1){ //Constant already assigned found
+                TestSymbol = Virtual; 
+                FounSymbol = temp; //NULL
+        }
+        else if (Found && temp != NULL){//found in current scope or previous scopes
+                TestSymbol = Virtual;
+                FounSymbol = temp;
         }
 }

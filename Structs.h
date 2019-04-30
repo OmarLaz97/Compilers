@@ -1,7 +1,7 @@
 typedef enum {Const_Type, Identifier_Type, Opr_Type} NodeEnum;
 typedef enum {isInteger, isFloat, isChar, isString} TypeEnum;
 /*typedef enum {NotDeclared, isConst, Declared} PermissionEnum;*/
-typedef enum {Accepted, isConst} PermissionEnum;
+typedef enum {Accepted, isConst, NotDeclared} PermissionEnum;
 
 /* Node for Constants const int x*/
 typedef struct {

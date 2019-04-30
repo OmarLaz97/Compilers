@@ -25,7 +25,7 @@ struct SymbolInfo {
     int Sym_Type;
     int Sym_Scope;
     union Value Sym_Value;
-    int Sym_Perm;
+    PermissionEnum Sym_Perm;
     bool Sym_Init;
 
     struct SymbolInfo *Next;
@@ -168,11 +168,14 @@ bool DeleteHash(char *Name, int Type, int Scope){
     if (symbolEntry->Next == NULL && !strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Type== Type && symbolEntry->Sym_Scope == Scope){
         free(symbolEntry);
         HashTable[HashIndex] = NULL;
+
+        return true;
     }
     //at head and has followers
     else if (!strcmp(symbolEntry->Sym_Name, Name) && symbolEntry->Sym_Type== Type && symbolEntry->Sym_Scope == Scope){
         HashTable[HashIndex] = symbolEntry->Next;
         free(symbolEntry);
+        return true;
     }
     else {
         //not found at head, search in chain
@@ -192,6 +195,10 @@ bool DeleteHash(char *Name, int Type, int Scope){
         return true;
     }
     return false;         
+}
+
+bool Delete(struct SymbolInfo *symbolEntry){
+    return DeleteHash(symbolEntry->Sym_Name, symbolEntry->Sym_Type, symbolEntry->Sym_Scope);
 }
 
 bool UpdateHash(char *Name, int Type, int Scope, union Value newVal){
@@ -249,6 +256,56 @@ bool UpdateHash3(char *Name, int newVal){
     
 }
 
+//return 1 if variable found and updated
+//return 0 if variable not found but updated for test 
+struct SymbolInfo * UpdateAnyway(char *Name, int newVal, bool*Found, int Scope_, struct SymbolInfo **Virtual){
+    struct SymbolInfo *symbolEntry = AlreadyDeclaredInScope(Name, Scope_);
+
+    *Virtual = malloc(sizeof(struct SymbolInfo)); 
+
+    //struct SymbolInfo *symbolEntry = SearchByName(Name);
+
+    if (symbolEntry == NULL){ //symbol with this name and scope not found
+        symbolEntry = SearchByName(Name); //check other scopes
+        if (symbolEntry == NULL){ //if name not found in other scopes too, set found b false, and create new node
+            (*Found) = false;
+            (*Virtual)->Sym_Name = Name;
+            (*Virtual)->Sym_Type = -1;
+            (*Virtual)->Sym_Scope = Scope_;
+            (*Virtual)->Sym_Perm = -1;
+            (*Virtual)->Sym_Init = true;
+            (*Virtual)->Sym_Value.MyintValue = newVal;
+            InsertTable(*Virtual);
+            return NULL;
+        }  
+    }    
+   
+    //node found in current scope or previous scopes
+    (*Found)= true;  
+    (*Virtual)->Sym_Name = Name;
+    (*Virtual)->Sym_Type = -1;
+    (*Virtual)->Sym_Scope = Scope_;
+    (*Virtual)->Sym_Perm = 2; //not declared
+    (*Virtual)->Sym_Init = true;
+    (*Virtual)->Sym_Value.MyintValue = newVal;
+    InsertTable(*Virtual);
+
+    if (symbolEntry->Sym_Perm == 1  && symbolEntry->Sym_Init == false) {//is const and not assigned before
+        //symbolEntry->Sym_Value.MyintValue = newVal;
+        //symbolEntry->Sym_Init = true;
+        return symbolEntry;
+    }
+    else if (symbolEntry->Sym_Perm != 1){//is not const
+        //symbolEntry->Sym_Value.MyintValue = newVal;
+        //symbolEntry->Sym_Init = true;
+        return symbolEntry;
+    }
+    else //is const
+        return symbolEntry;
+    
+    
+}
+
 int checkPerm(char *Name){
     struct SymbolInfo *symbolEntry = SearchByName(Name);
     if (symbolEntry == NULL)
@@ -257,46 +314,13 @@ int checkPerm(char *Name){
     return symbolEntry->Sym_Perm;
 }
 
-/*
-int main(){
-    int Scope=0;
-   FILE *fptr;
 
-   if ((fptr = fopen("program.txt","r")) == NULL){
-       printf("Error! opening file");
-
-       // Program exits if the file pointer returns NULL.
-       exit(1);
-   }
-
-   while (!feof(fptr)){
-        char *Name[50];
-        char *Type[50];
-        char *unknown[50];
-
-        fscanf(fptr,"%s", &unknown);
-        printf(".");
-        printf(unknown);
-         printf(".");
-        printf("\n");
-        if (!strcmp(unknown,"{")) Scope++;
-        else if (!strcmp(unknown,"}")) Scope--;
-        else if (!strcmp(unknown,"3ayem")){
-           
-            strcpy(Type, unknown); 
-            fscanf(fptr,"%s", &Name);
-            struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo)); 
-            
-            temp->Sym_Name = Name;
-            temp->Sym_Type = Type;
-            temp->Sym_Scope = Scope;
-            InsertTable(temp);
-        }
-   }
-
-   fclose(fptr); 
-  
-   PrintSymbolTable();
-   return 0;
+bool UpdatePermAndType(char*Name, int Per, int Type){
+    struct SymbolInfo *symbolEntry = SearchByName(Name);
+    if (symbolEntry == NULL){
+        return false;
+    }
+    symbolEntry->Sym_Perm = Per;
+    symbolEntry->Sym_Type = Type;
+    return true;
 }
-*/
