@@ -11,6 +11,7 @@
 
   int NumberIdent=0;
   char *IDs[10];
+  int n;
 
  struct SymbolInfo * TestSymbol = NULL;
   struct SymbolInfo * FounSymbol = NULL;
@@ -23,6 +24,10 @@
   nodeType * Assign(char* Name, int newValue);
   nodeType *Test(char* Name, int Per, int Type);
   
+  int Abrev(char* Name, int c,int val);
+  nodeType * Assign2(char* Name, bool newValue);
+  int getValue(char* Name);
+
 %}
 
 %union{
@@ -59,8 +64,8 @@
 %left SMALLERTHAN SMALLERTHANOREQUAL GREATERTHAN GREATERTHANOREQUAL
 %right NOT 
 
-%type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_
-%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_ 
+%type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_  Expr2_
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS
 %type <MyintValue> datatype
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
@@ -306,8 +311,10 @@
                        | Assignment_ {$$=$1;}
                        ;
 
-        Assignment_: IDENTIFIER EQUAL Expr_ {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}
-                   | IDENTIFIER EQUAL Expr2_
+        Assignment_: IDENTIFIER EQUAL Expr_ {if($3==true)$$= Assign2($1, $3);
+                                                 else if ($3==false) $$= Assign2($1, $3); 
+                                                 else {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}}
+                   | IDENTIFIER EQUAL Expr2_ {$$= Assign($1, $3);}
                    |IDENTIFIER EQUAL FnCall_
                    ;
 
@@ -320,14 +327,14 @@
                | FLOATVALUE /*{$$=$1;}*/
                ;
 
-        Expr2_: IDENTIFIER PLUS_PLUS
-              | PLUS_PLUS IDENTIFIER
-              | IDENTIFIER MINUS_MINUS
-              | MINUS_MINUS IDENTIFIER
-              |IDENTIFIER PLUS_EQUAL Number_
-              |IDENTIFIER MINUS_EQUAL Number_
-              |IDENTIFIER MULTIPLY_EQUAL Number_
-              |IDENTIFIER DIVIDE_EQUAL Number_
+        Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
+              | PLUS_PLUS IDENTIFIER {$$=Abrev($2,1,1);}
+              | IDENTIFIER MINUS_MINUS{$$=Abrev($1,2,1);}
+              | MINUS_MINUS IDENTIFIER {$$=Abrev($2,2,1);}
+              |IDENTIFIER PLUS_EQUAL Number_ {$$=Abrev($1,1,$3);}
+              |IDENTIFIER MINUS_EQUAL Number_ {$$=Abrev($1,2,$3);}
+              |IDENTIFIER MULTIPLY_EQUAL Number_ {$$=Abrev($1,3,$3);}
+              |IDENTIFIER DIVIDE_EQUAL Number_ {$$=Abrev($1,4,$3);}
               ;
 
         Expr_: Logical_ {$$=$1;}/*{printf("result = %f\n", $1);}*/
@@ -335,27 +342,27 @@
 
         Logical_: Logical_ AND Math_
                 | Logical_ OR Math_
-                | Logical_ GREATERTHAN Math_
-                | Logical_ GREATERTHANOREQUAL Math_
-                | Logical_ SMALLERTHAN Math_
-                | Logical_ SMALLERTHANOREQUAL Math_
-                | Logical_ EQUALEQUAL Math_
-                | Logical_ NOTEQUAL Math_
+                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false;}
+                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false;}
+                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;}
+                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;}
+                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;}
+                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;}
                 | NOT Math_
                 | Math_ {$$=$1;}
                 ;
 
-        Math_: Math_ PLUS Term_ /*{$$= $1 + $3;*/
-             | Math_ MINUS Term_ /*{$$= $1 - $3;*/
+        Math_: Math_ PLUS Term_ {$$= $1 + $3;}
+             | Math_ MINUS Term_ {$$= $1 - $3;}
              | Term_ {$$=$1;}
              ;
 
-        Term_: Term_ MULTIPLY Factor_ /*{$$= $1 * $3;*/
-             | Term_ DIVIDE Factor_ /*{if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;*/
+        Term_: Term_ MULTIPLY Factor_ {$$= $1 * $3;}
+             | Term_ DIVIDE Factor_ {if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;}
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+        Factor_: IDENTIFIER{$$=getValue($1)} | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -564,3 +571,45 @@ nodeType * Assign(char* Name, int newValue){
                 FounSymbol = temp;
         }
 }
+nodeType * Assign2(char* Name, bool newValue){
+        if(!UpdateHash4(Name, newValue)){
+                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(1);  
+        }
+}
+int getValue(char* Name){
+        struct SymbolInfo *symbolEntry = SearchByName(Name);
+         int newv;
+         newv=symbolEntry->Sym_Value.MyintValue;
+         return newv;
+}
+int Abrev(char* Name , int c,int val)
+{
+         struct SymbolInfo *symbolEntry = SearchByName(Name);
+         
+         int newv;
+        if(c==1)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue+val;
+        }
+        else if(c==2)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue-val;
+        }
+        else if(c==3)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue*val;
+        }
+        else if(c==4)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue/val;
+        }
+        if(!UpdateHash3(Name, newv)){
+                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(1);  
+        }
+        return newv;
+
+   
+}
+

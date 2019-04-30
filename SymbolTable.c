@@ -255,6 +255,24 @@ bool UpdateHash3(char *Name, int newVal){
     return false;
     
 }
+bool UpdateHash4(char *Name, bool newVal){
+    struct SymbolInfo *symbolEntry = SearchByName(Name);
+    if (symbolEntry == NULL)
+        return false;
+
+    if (symbolEntry->Sym_Perm == 1  && symbolEntry->Sym_Init == false) {//is const and not assigned before
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    else if (symbolEntry->Sym_Perm != 1){
+        symbolEntry->Sym_Value.MyintValue = newVal;
+        symbolEntry->Sym_Init = true;
+        return true;
+    }
+    return false;
+    
+}
 
 //return 1 if variable found and updated
 //return 0 if variable not found but updated for test 

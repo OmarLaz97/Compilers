@@ -17,4 +17,14 @@ void main(){
     //fa hayshuf en maram already defined f scope adim ma3 en el scope da kheles
     maram=0;
 
+
+rakam m,l,k,u,a;
+bool g,mirna,walaa;
+m=2;
+u=4;
+a=10;
+mirna=a>8;
+g=a>u+2;
+walaa=m!=a;
 }
+  
