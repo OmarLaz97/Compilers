@@ -27,6 +27,7 @@
   int Abrev(char* Name, int c,int val);
   nodeType * Assign2(char* Name, bool newValue);
   int getValue(char* Name);
+  bool getInit(char* Name);
 
 %}
 
@@ -360,7 +361,9 @@
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER {$$=getValue($1);} | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+        Factor_: IDENTIFIER {if(getInit($1)) $$=getValue($1);
+                             else  yyerror("Identifier not initialized");  } 
+                                | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -569,12 +572,7 @@ nodeType * Assign(char* Name, int newValue){
                 FounSymbol = temp;
         }
 }
-nodeType * Assign2(char* Name, bool newValue){
-        if(!UpdateHash4(Name, newValue)){
-                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
-                exit(1);  
-        }
-}
+
 int getValue(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
@@ -585,6 +583,16 @@ int getValue(char* Name){
         newv=symbolEntry->Sym_Value.MyintValue;
         printf("neew val %d ", newv);
         return newv;
+}
+bool getInit(char* Name){
+        struct SymbolInfo *symbolEntry = SearchByName(Name);
+        if (symbolEntry == NULL){
+                printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
+                exit(1);
+        }
+        bool newinit;
+        newinit=symbolEntry->Sym_Init;
+        return newinit;
 }
 int Abrev(char* Name , int c,int val)
 {

@@ -21,7 +21,7 @@ rakam yassin;
 yassin=3;
 yassin=yassin + jana;
 yassin+=4;
-    rakam m,l,k,u,a;
+    rakam m,l,k,u,a,mm;
 bool g,mirna,walaa;
 m=2;
 u=4;
@@ -29,6 +29,9 @@ a=10;
 mirna=a>8;
 g=a>u+2;
 walaa=m!=a;
+mm=3;
+rakam q;
+mm=q+4;
     
 }
   
