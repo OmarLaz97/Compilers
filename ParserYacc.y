@@ -11,6 +11,7 @@
 
   int NumberIdent=0;
   char *IDs[10];
+  int n;
 
   int Scope_= 0;
   int MaxScope=0;
@@ -18,7 +19,8 @@
 
   nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
-  
+  int Abrev(char* Name, int c,int val);
+  int getValue(char* Name);
 %}
 
 %union{
@@ -55,8 +57,8 @@
 %left SMALLERTHAN SMALLERTHANOREQUAL GREATERTHAN GREATERTHANOREQUAL
 %right NOT 
 
-%type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_
-%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_ 
+%type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_  Expr2_
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS
 %type <MyintValue> datatype
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
@@ -202,7 +204,7 @@
                        ;
 
         Assignment_: IDENTIFIER EQUAL Expr_ {$$= Assign($1, $3);}
-                   | IDENTIFIER EQUAL Expr2_
+                   | IDENTIFIER EQUAL Expr2_ {$$= Assign($1, $3);}
                    |IDENTIFIER EQUAL FnCall_
                    ;
 
@@ -215,14 +217,14 @@
                | FLOATVALUE /*{$$=$1;}*/
                ;
 
-        Expr2_: IDENTIFIER PLUS_PLUS
-              | PLUS_PLUS IDENTIFIER
-              | IDENTIFIER MINUS_MINUS
-              | MINUS_MINUS IDENTIFIER
-              |IDENTIFIER PLUS_EQUAL Number_
-              |IDENTIFIER MINUS_EQUAL Number_
-              |IDENTIFIER MULTIPLY_EQUAL Number_
-              |IDENTIFIER DIVIDE_EQUAL Number_
+        Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
+              | PLUS_PLUS IDENTIFIER {$$=Abrev($2,1,1);}
+              | IDENTIFIER MINUS_MINUS{$$=Abrev($1,2,1);}
+              | MINUS_MINUS IDENTIFIER {$$=Abrev($2,2,1);}
+              |IDENTIFIER PLUS_EQUAL Number_ {$$=Abrev($1,1,$3);}
+              |IDENTIFIER MINUS_EQUAL Number_ {$$=Abrev($1,2,$3);}
+              |IDENTIFIER MULTIPLY_EQUAL Number_ {$$=Abrev($1,3,$3);}
+              |IDENTIFIER DIVIDE_EQUAL Number_ {$$=Abrev($1,4,$3);}
               ;
 
         Expr_: Logical_ {$$=$1;}/*{printf("result = %f\n", $1);}*/
@@ -240,17 +242,17 @@
                 | Math_ {$$=$1;}
                 ;
 
-        Math_: Math_ PLUS Term_ /*{$$= $1 + $3;*/
-             | Math_ MINUS Term_ /*{$$= $1 - $3;*/
+        Math_: Math_ PLUS Term_ {$$= $1 + $3;}
+             | Math_ MINUS Term_ {$$= $1 - $3;}
              | Term_ {$$=$1;}
              ;
 
-        Term_: Term_ MULTIPLY Factor_ /*{$$= $1 * $3;*/
-             | Term_ DIVIDE Factor_ /*{if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;*/
+        Term_: Term_ MULTIPLY Factor_ {$$= $1 * $3;}
+             | Term_ DIVIDE Factor_ {if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;}
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+        Factor_: IDENTIFIER{$$=getValue($1)} | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -439,9 +441,46 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
         
 }
 
-nodeType * Assign(char* Name, int newValue){;
+nodeType * Assign(char* Name, int newValue){
         if(!UpdateHash3(Name, newValue)){
                 printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
                 exit(1);  
         }
+}
+int Abrev(char* Name , int c,int val)
+{
+         struct SymbolInfo *symbolEntry = SearchByName(Name);
+         
+         int newv;
+        if(c==1)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue+val;
+        }
+        else if(c==2)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue-val;
+        }
+        else if(c==3)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue*val;
+        }
+        else if(c==4)
+        {
+                newv=symbolEntry->Sym_Value.MyintValue/val;
+        }
+        if(!UpdateHash3(Name, newv)){
+                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(1);  
+        }
+        return newv;
+
+   
+}
+int getValue(char* Name)
+{
+        struct SymbolInfo *symbolEntry = SearchByName(Name);
+         
+         int newv;
+        newv=symbolEntry->Sym_Value.MyintValue;
+        return newv;
 }

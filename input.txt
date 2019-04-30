@@ -1,3 +1,12 @@
 void main(){
-    3ayem Mirna = 0;
+rakam m,l,k,u,a;
+m=10;
+u=4;
+a=1;
+l=m*3;
+k=m*4;
+k=m/2;
+u++;
+a+=4;
 }
+  
