@@ -20,7 +20,9 @@
   nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
   int Abrev(char* Name, int c,int val);
+  nodeType * Assign2(char* Name, bool newValue);
   int getValue(char* Name);
+
 %}
 
 %union{
@@ -203,7 +205,9 @@
                        | Assignment_ {$$=$1;}
                        ;
 
-        Assignment_: IDENTIFIER EQUAL Expr_ {$$= Assign($1, $3);}
+        Assignment_: IDENTIFIER EQUAL Expr_ {if($3==true)$$= Assign2($1, $3);
+                                                 else if ($3==false) $$= Assign2($1, $3); 
+                                                 else $$= Assign($1, $3);}
                    | IDENTIFIER EQUAL Expr2_ {$$= Assign($1, $3);}
                    |IDENTIFIER EQUAL FnCall_
                    ;
@@ -232,12 +236,12 @@
 
         Logical_: Logical_ AND Math_
                 | Logical_ OR Math_
-                | Logical_ GREATERTHAN Math_
-                | Logical_ GREATERTHANOREQUAL Math_
-                | Logical_ SMALLERTHAN Math_
-                | Logical_ SMALLERTHANOREQUAL Math_
-                | Logical_ EQUALEQUAL Math_
-                | Logical_ NOTEQUAL Math_
+                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false;}
+                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false;}
+                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;}
+                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;}
+                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;}
+                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;}
                 | NOT Math_
                 | Math_ {$$=$1;}
                 ;
@@ -447,6 +451,18 @@ nodeType * Assign(char* Name, int newValue){
                 exit(1);  
         }
 }
+nodeType * Assign2(char* Name, bool newValue){
+        if(!UpdateHash4(Name, newValue)){
+                printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(1);  
+        }
+}
+int getValue(char* Name){
+        struct SymbolInfo *symbolEntry = SearchByName(Name);
+         int newv;
+         newv=symbolEntry->Sym_Value.MyintValue;
+         return newv;
+}
 int Abrev(char* Name , int c,int val)
 {
          struct SymbolInfo *symbolEntry = SearchByName(Name);
@@ -476,11 +492,4 @@ int Abrev(char* Name , int c,int val)
 
    
 }
-int getValue(char* Name)
-{
-        struct SymbolInfo *symbolEntry = SearchByName(Name);
-         
-         int newv;
-        newv=symbolEntry->Sym_Value.MyintValue;
-        return newv;
-}
+

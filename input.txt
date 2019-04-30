@@ -1,12 +1,11 @@
 void main(){
 rakam m,l,k,u,a;
-m=10;
+bool g,mirna,walaa;
+m=2;
 u=4;
-a=1;
-l=m*3;
-k=m*4;
-k=m/2;
-u++;
-a+=4;
+a=10;
+mirna=a>8;
+g=a>u+2;
+walaa=m!=a;
 }
   
