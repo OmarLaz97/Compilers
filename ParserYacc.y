@@ -311,9 +311,7 @@
                        | Assignment_ {$$=$1;}
                        ;
 
-        Assignment_: IDENTIFIER EQUAL Expr_ {if($3==true)$$= Assign2($1, $3);
-                                                 else if ($3==false) $$= Assign2($1, $3); 
-                                                 else {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}}
+        Assignment_: IDENTIFIER EQUAL Expr_ {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}
                    | IDENTIFIER EQUAL Expr2_ {$$= Assign($1, $3);}
                    |IDENTIFIER EQUAL FnCall_
                    ;
@@ -362,7 +360,7 @@
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER{$$=getValue($1)} | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+        Factor_: IDENTIFIER {$$=getValue($1);} | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -579,9 +577,14 @@ nodeType * Assign2(char* Name, bool newValue){
 }
 int getValue(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
-         int newv;
-         newv=symbolEntry->Sym_Value.MyintValue;
-         return newv;
+        if (symbolEntry == NULL){
+                printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
+                exit(1);
+        }
+        int newv;
+        newv=symbolEntry->Sym_Value.MyintValue;
+        printf("neew val %d ", newv);
+        return newv;
 }
 int Abrev(char* Name , int c,int val)
 {
