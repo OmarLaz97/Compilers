@@ -9,6 +9,8 @@
 #include "Structs.h"
 #define HASH_SIZE 60
 
+bool ScopesArray[100];
+
 union Value {
 	int MyintValue;	    /* integer value */
 	float MyfloatValue;    /* float value */
@@ -83,7 +85,7 @@ struct SymbolInfo * SearchByName(char *Name){
     struct SymbolInfo *symbolEntry = HashTable[HashIndex];
 
     while (symbolEntry != NULL){
-        if (!strcmp(symbolEntry->Sym_Name, Name)){
+        if (!strcmp(symbolEntry->Sym_Name, Name) && ScopesArray[symbolEntry->Sym_Scope] == true){
             return symbolEntry; //found
         }
     symbolEntry = symbolEntry->Next;  

@@ -12,12 +12,13 @@
   int NumberIdent=0;
   char *IDs[10];
   int n;
+  int DatatypeId;
 
  struct SymbolInfo * TestSymbol = NULL;
   struct SymbolInfo * FounSymbol = NULL;
 
-  int Scope_= 0;
-  int MaxScope=0;
+  int Scope_= -1;
+  int MaxScope=-1;
   push(Scope_);
 
   nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
@@ -28,6 +29,8 @@
   nodeType * Assign2(char* Name, bool newValue);
   int getValue(char* Name);
   bool getInit(char* Name);
+
+ 
 
 %}
 
@@ -125,7 +128,7 @@
                    ;  
          
 
-        Main_: VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Main");}
+        Main_: VOID MAIN OPENED_BRACKET CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid Main");}
              | VOID MAIN OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE {printf("\nValid Main");}
              ;
 
@@ -322,8 +325,8 @@
             | BOOLVALUE 
             ;
 
-        Number_: INTVALUE {$$=$1;}
-               | FLOATVALUE /*{$$=$1;}*/
+        Number_: INTVALUE {DatatypeId =0; $$=$1;}
+               | FLOATVALUE {DatatypeId =1; $$=$1;}
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
@@ -445,10 +448,10 @@
                   | WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid While Statement");} 
                   ; 
 
-        OpenedBrace_: OPENED_BRACE {MaxScope++; Scope_= MaxScope; push(MaxScope);}
+        OpenedBrace_: OPENED_BRACE {MaxScope++; Scope_= MaxScope; ScopesArray[Scope_]= true; push(MaxScope);}
                     ;
 
-        ClosedBrace_: CLOSED_BRACE {pop(); Scope_= peek();}
+        ClosedBrace_: CLOSED_BRACE {ScopesArray[Scope_]= false; pop(); Scope_= peek();}
                     ;                      
 
        WhileStmtRtn_: WHILE OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyLoopRtn_ ClosedBrace_ {printf("\nValid While Statement");} 

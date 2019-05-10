@@ -1,22 +1,25 @@
 void main(){
   rakam x, y;
 
-    rakam jana = 30;
+    rakam jana = 30.3;
     sabet rakam gg=0;
     sabet rakam laz=33;
     
     law(gg){
         sabet 3ayem laz;
-        laz = 55;
+        //laz = 55;
+
+        law(gg){
+           // jana =5;
+            laz =511;
+        }
         
         //laz=99;
         rakam maram= 77;
         //rakam maram;
     }
 
-    //hena hasteshtaghal for testing bas, 3ashan mesh bamsah men el symbol table 3ashan yeb2a kol haga bayna
-    //fa hayshuf en maram already defined f scope adim ma3 en el scope da kheles
-    maram=0;
+    //maram=0;
 rakam yassin;
 yassin=3;
 yassin=yassin + jana;
@@ -30,7 +33,7 @@ mirna=a>8;
 g=a>u+2;
 walaa=m!=a;
 mm=3;
-rakam q;
+rakam q=3;
 mm=q+4;
     
 }
