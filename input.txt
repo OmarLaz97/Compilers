@@ -1,32 +1,32 @@
 void main(){
   rakam x, y;
 
-    rakam jana = 30.3;
+    rakam jana = 30;
     sabet rakam gg=0;
     sabet rakam laz=33;
-    
+ 
     law(gg){
         sabet 3ayem laz;
-        //laz = 55;
+ //laz = 55;
 
         law(gg){
-           // jana =5;
-            laz =511;
-        }
-        
-        //laz=99;
+ // jana =5;
+ laz =511.1;
+ }
+ 
+ //laz=99;
         rakam maram= 77;
-        //rakam maram;
-    }
+ //rakam maram;
+ }
 
-    //maram=0;
+ //maram=0;
 rakam yassin;
 yassin=3;
 yassin=yassin + jana;
 yassin+=4;
     rakam m,l,k,u,a,mm;
 bool g,mirna,walaa;
-m=2;
+m=10;
 u=4;
 a=10;
 mirna=a>8;
@@ -35,6 +35,7 @@ walaa=m!=a;
 mm=3;
 rakam q=3;
 mm=q+4;
-    
+ 
 }
-  
+ 
+

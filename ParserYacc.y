@@ -381,12 +381,12 @@
 
         Logical_: Logical_ AND Math_
                 | Logical_ OR Math_
-                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false;}
-                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false;}
-                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;}
-                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;}
-                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;}
-                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;}
+                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false; DatatypeId=4;}
+                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false; DatatypeId=4;}
+                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;DatatypeId=4;}
                 | NOT Math_
                 | Math_ {$$=$1;}
                 ;
@@ -403,7 +403,9 @@
 
         Factor_: IDENTIFIER {if(getInit($1)) $$=getValue($1);
                              else  yyerror("Identifier not initialized");  } 
-                                | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+                | Val_ {$$=$1;}
+                | Number_ {$$=$1;}
+                | OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
