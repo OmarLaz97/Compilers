@@ -242,6 +242,9 @@
                                                         if (FounSymbol == NULL){ //not found before
                                                                 if ($1 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                        Delete(TestSymbol);        
+                                                                        TestSymbol = NULL; 
+                                                                        NumberIdent=0;
                                                                         exit(1);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
@@ -256,6 +259,9 @@
                                                                 //not same scope
                                                                 if ($1 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                        Delete(TestSymbol);
+                                                                        TestSymbol = NULL; 
+                                                                        NumberIdent=0;
                                                                         exit(1);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
@@ -275,6 +281,9 @@
                                                         if (FounSymbol == NULL){
                                                                 if ($1 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                        Delete(TestSymbol);
+                                                                        TestSymbol = NULL; 
+                                                                        NumberIdent=0;
                                                                         exit(1);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
@@ -289,6 +298,9 @@
                                                                 //not same scope
                                                                 if ($1 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                        Delete(TestSymbol);
+                                                                        TestSymbol = NULL; 
+                                                                        NumberIdent=0;
                                                                         exit(1);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
