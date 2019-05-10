@@ -49,9 +49,10 @@
 %token <MyfloatValue> FLOATVALUE;
 %token <MycharValue> CHARVALUE;
 %token <MystringValue> STRINGVALUE;
+%token <MyintValue> BOOLVALUE
 %token <Mycomment> COMMENT;
 %token <Myidentifier> IDENTIFIER;
-%token CONSTANT INT FLOAT STRING CHAR BOOL IF THEN ELSE WHILE DO SWITCH CASE DEFAULT FOR AND OR EQUALEQUAL GREATERTHAN SMALLERTHAN GREATERTHANOREQUAL SMALLERTHANOREQUAL NOT NOTEQUAL VOID MAIN RETURN BOOLVALUE 
+%token CONSTANT INT FLOAT STRING CHAR BOOL IF THEN ELSE WHILE DO SWITCH CASE DEFAULT FOR AND OR EQUALEQUAL GREATERTHAN SMALLERTHAN GREATERTHANOREQUAL SMALLERTHANOREQUAL NOT NOTEQUAL VOID MAIN RETURN  
 %token SEMI_COLON OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE CLOSED_BRACE OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA TWO_DOTS PLUS MINUS MULTIPLY DIVIDE REMAINDER PLUS_EQUAL MINUS_EQUAL MULTIPLY_EQUAL DIVIDE_EQUAL PLUS_PLUS MINUS_MINUS EQUAL
 %token ERROR BREAK
 
@@ -70,7 +71,7 @@
 
 %type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_  Expr2_
 %type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS
-%type <MyintValue> datatype
+%type <MyintValue> datatype Val_
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
 %%
@@ -137,12 +138,16 @@
              | Body_ Assignment_ SEMI_COLON {
                         if (TestSymbol != NULL){ //undeclared virtual p=0;
                              if (FounSymbol != NULL){ //previously declared
-                                        printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
+                                        printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
                                                 exit(1);
                                         }
                                         else{
+                                                if (FounSymbol->Sym_Type != DatatypeId){//check type
+                                                        printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
+                                                        exit(1);
+                                                }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
                                                 Delete(TestSymbol);
@@ -171,6 +176,10 @@
                                                 exit(1);
                                         }
                                         else{
+                                                if (FounSymbol->Sym_Type != DatatypeId){//check type
+                                                        printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
+                                                        exit(1);
+                                                }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
                                                 Delete(TestSymbol);
@@ -320,9 +329,9 @@
                    |IDENTIFIER EQUAL FnCall_
                    ;
 
-        Val_: STRINGVALUE 
-            | CHARVALUE 
-            | BOOLVALUE 
+        Val_: STRINGVALUE {DatatypeId= 2; $$=$1;}
+            | CHARVALUE {DatatypeId= 3; $$=$1;}
+            | BOOLVALUE {DatatypeId= 4; $$=$1;}
             ;
 
         Number_: INTVALUE {DatatypeId =0; $$=$1;}
