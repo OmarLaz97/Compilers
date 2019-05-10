@@ -141,12 +141,12 @@
                                         printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
-                                                exit(1);
+                                                exit(0);
                                         }
                                         else{
                                                 if (FounSymbol->Sym_Type != DatatypeId){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
-                                                        exit(1);
+                                                        exit(0);
                                                 }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
@@ -161,7 +161,7 @@
                                 Delete(TestSymbol);
                                 TestSymbol = NULL; 
                                 NumberIdent=0;
-                                exit(1);
+                                exit(0);
                              }
                              
                         }
@@ -173,12 +173,12 @@
                                         printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
-                                                exit(1);
+                                                exit(0);
                                         }
                                         else{
                                                 if (FounSymbol->Sym_Type != DatatypeId){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
-                                                        exit(1);
+                                                        exit(0);
                                                 }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
@@ -193,7 +193,7 @@
                                 Delete(TestSymbol);
                                 TestSymbol = NULL; 
                                 NumberIdent=0;
-                                exit(1);
+                                exit(0);
                              }
                         }
                 }
@@ -254,7 +254,7 @@
                                                                         Delete(TestSymbol);        
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
@@ -263,7 +263,7 @@
                                                         else { //found before
                                                                 if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
                                                                 printf("Already declared in same scope\n");
-                                                                exit(1);
+                                                                exit(0);
                                                                 }
                                                                 //not same scope
                                                                 if ($1 != DatatypeId){//check datatype
@@ -271,7 +271,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
@@ -293,7 +293,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
@@ -302,7 +302,7 @@
                                                         else {
                                                                 if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
                                                                 printf("Declared in same scope");
-                                                                exit(1);
+                                                                exit(0);
                                                                 }
                                                                 //not same scope
                                                                 if ($2 != DatatypeId){//check datatype
@@ -310,7 +310,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
@@ -561,7 +561,7 @@ return 1;
 
 void yyerror(char *msg){
   fprintf(stderr,"\nError on line %d : %s",mylineno,msg);
-  exit(1);
+  exit(0);
 }
 
 
@@ -569,7 +569,7 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
         for (int i=0; i<Num; i++){
                 if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
                 printf("\nIdentifier with name %s on line %d is already defined in this scope",a[i], mylineno);
-                exit(1);
+                exit(0);
                 }
 
                 struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
@@ -581,7 +581,7 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
 
                 if (!InsertTable(temp)){
                         printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",a[i], mylineno);
-                        exit(1);
+                        exit(0);
                 }
         }
         
@@ -617,7 +617,7 @@ int getValue(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
                 printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
-                exit(1);
+                exit(0);
         }
         int newv;
         newv=symbolEntry->Sym_Value.MyintValue;
@@ -628,7 +628,7 @@ bool getInit(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
                 printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
-                exit(1);
+                exit(0);
         }
         bool newinit;
         newinit=symbolEntry->Sym_Init;
@@ -657,7 +657,7 @@ int Abrev(char* Name , int c,int val)
         }
         if(!UpdateHash3(Name, newv)){
                 printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
-                exit(1);  
+                exit(0);  
         }
         return newv;
 
