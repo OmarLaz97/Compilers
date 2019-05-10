@@ -288,7 +288,7 @@
                                                 }
                                                 else { //fih virtual, fi assignmnett
                                                         if (FounSymbol == NULL){
-                                                                if ($1 != DatatypeId){//check datatype
+                                                                if ($2 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
@@ -305,7 +305,7 @@
                                                                 exit(1);
                                                                 }
                                                                 //not same scope
-                                                                if ($1 != DatatypeId){//check datatype
+                                                                if ($2 != DatatypeId){//check datatype
                                                                         printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
