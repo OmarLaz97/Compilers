@@ -474,8 +474,8 @@
                | FLOATVALUE {pushQ();DatatypeId[indexExpr] =1; indexExpr++; $$=$1;}
                ;
 
-        Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
-              | PLUS_PLUS IDENTIFIER {$$=Abrev($2,1,1);}
+        Expr2_: IDENTIFIER PLUS_PLUS {codegen_single("ADD", $1, 1); $$=Abrev($1,1,1);}
+              | PLUS_PLUS IDENTIFIER {codegen_single("ADD", $1, 1);$$=Abrev($2,1,1);}
               | IDENTIFIER MINUS_MINUS{$$=Abrev($1,2,1);}
               | MINUS_MINUS IDENTIFIER {$$=Abrev($2,2,1);}
               |IDENTIFIER PLUS_EQUAL Number_ {$$=Abrev($1,1,$3);}
@@ -706,6 +706,14 @@ printf("%s = -%s\n",tempV,st[topQ]);
 topQ--;
 strcpy(st[topQ],tempV);
 tempV[1]++;
+}
+codegen_single(char* operation, char* Identifier, int value ){
+      
+      
+FILE *f = fopen("file.txt", "a");
+
+fprintf(f," %s  %s %s %d\n",operation,Identifier,Identifier,value);
+fclose(f);
 }
 codegen_assign()
 {

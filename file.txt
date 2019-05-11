@@ -2,3 +2,5 @@
  DIV  t1 t0 2
  ADD  t2 y t1
  ADD  t3 t2 5
+ SUB  t4 t3 t
+ ADD  x x 1

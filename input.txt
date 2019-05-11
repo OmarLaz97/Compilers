@@ -30,7 +30,15 @@ void main(){
   rakam x =1;
   rakam a =1;
   rakam y =1;
-  x=y+3*a/2+5;
+  rakam t=2;
+  x=y+3*a/2+5-t;
+  y=x++;
+ x= x--;
+  a*=2;
+  a/=1;
+  --a;
+  a--;
+  a-=3;
 }
  
 
