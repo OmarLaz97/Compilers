@@ -508,12 +508,15 @@
                                                         exit(0);
                                                 }
                                                indexExpr=0;
-                                               if(typeIdtnt!= numtype){
+                                               $$=Abrev($1,3,$3);}
+                |IDENTIFIER DIVIDE_EQUAL Number_ {int typeIdtnt= gettype($1); 
+                                                int numtype= DatatypeId[indexExpr-1]; 
+                                                 if (typeIdtnt != numtype){
                                                         printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
                                                         exit(0);
                                                 }
                                                indexExpr=0;
-                                               $$=Abrev($1,4,$3);}
+                                               $$=Abrev($1,4,$3);}                               
               ;
 
         Expr_: Logical_ {$$=$1;}/*{printf("result = %f\n", $1);}*/
