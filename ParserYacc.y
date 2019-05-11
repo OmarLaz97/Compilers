@@ -13,6 +13,8 @@
   char *IDs[10];
   int TypesArray[10];
 
+  int Expr2Type = -1;
+
   int n;
   int DatatypeId[10];
   int compare=0;
@@ -461,7 +463,13 @@
                        ;
 
         Assignment_: IDENTIFIER EQUAL Expr_ {IDs[NumberIdent] = $1; NumberIdent++; $$= Assign($1, $3);}
-                   | IDENTIFIER EQUAL Expr2_ {$$= Assign($1, $3);}
+                   | IDENTIFIER EQUAL Expr2_ {int TestType= gettype($1);
+                                                if (TestType != Expr2Type){
+                                                        printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
+                                                        exit(0);
+                                                }
+                                                Expr2Type = -1;
+                                                $$= Assign($1, $3);}
                    |IDENTIFIER EQUAL FnCall_
                    ;
 
@@ -474,14 +482,38 @@
                | FLOATVALUE {DatatypeId[indexExpr] =1; indexExpr++; $$=$1;}
                ;
 
-        Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
-              | PLUS_PLUS IDENTIFIER {$$=Abrev($2,1,1);}
-              | IDENTIFIER MINUS_MINUS{$$=Abrev($1,2,1);}
-              | MINUS_MINUS IDENTIFIER {$$=Abrev($2,2,1);}
-              |IDENTIFIER PLUS_EQUAL Number_ {$$=Abrev($1,1,$3);}
-              |IDENTIFIER MINUS_EQUAL Number_ {$$=Abrev($1,2,$3);}
-              |IDENTIFIER MULTIPLY_EQUAL Number_ {$$=Abrev($1,3,$3);}
-              |IDENTIFIER DIVIDE_EQUAL Number_ {$$=Abrev($1,4,$3);}
+        Expr2_: IDENTIFIER PLUS_PLUS {Expr2Type= gettype($1); $$=Abrev($1,1,1);}
+              | PLUS_PLUS IDENTIFIER {Expr2Type= gettype($2); $$=Abrev($2,1,1);}
+              | IDENTIFIER MINUS_MINUS{Expr2Type= gettype($1); $$=Abrev($1,2,1);}
+              | MINUS_MINUS IDENTIFIER {Expr2Type= gettype($2); $$=Abrev($2,2,1);}
+              |IDENTIFIER PLUS_EQUAL Number_ {int typeIdtnt= gettype($1); 
+                                                int numtype= DatatypeId[indexExpr-1]; 
+                                                 if (typeIdtnt != numtype){
+                                                        printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
+                                                        exit(0);
+                                                }
+                                               indexExpr=0;
+                                                $$=Abrev($1,1,$3);}
+              |IDENTIFIER MINUS_EQUAL Number_ {int typeIdtnt= gettype($1); 
+                                                int numtype= DatatypeId[indexExpr-1]; 
+                                                 if (typeIdtnt != numtype){
+                                                        printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
+                                                        exit(0);
+                                                }
+                                               indexExpr=0;$$=Abrev($1,2,$3);}
+              |IDENTIFIER MULTIPLY_EQUAL Number_ {int typeIdtnt= gettype($1); 
+                                                int numtype= DatatypeId[indexExpr-1]; 
+                                                 if (typeIdtnt != numtype){
+                                                        printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
+                                                        exit(0);
+                                                }
+                                               indexExpr=0;
+                                               Idtnt != numtype){
+                                                        printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
+                                                        exit(0);
+                                                }
+                                               indexExpr=0;
+                                               $$=Abrev($1,4,$3);}
               ;
 
         Expr_: Logical_ {$$=$1;}/*{printf("result = %f\n", $1);}*/
