@@ -639,7 +639,10 @@ bool getInit(char* Name){
 int Abrev(char* Name , int c,int val)
 {
          struct SymbolInfo *symbolEntry = SearchByName(Name);
-         
+         if (symbolEntry == NULL){
+                 printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(0); 
+         }
          int newv;
         if(c==1)
         {
