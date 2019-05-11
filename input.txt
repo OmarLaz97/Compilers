@@ -1,19 +1,21 @@
+
+
 void main(){
   rakam x, y;
 
     rakam jana = 30;
     sabet rakam gg=0;
     sabet rakam laz=33;
-    
+ 
     law(gg){
         sabet 3ayem laz;
         //laz = 55;
 
         law(gg){
            // jana =5;
-            laz =511.21;
+ laz =511.21;
         }
-        
+ 
         //laz=99;
         rakam maram= 77;
         //rakam maram;
@@ -35,6 +37,7 @@ a=10;
 mm=3;
 rakam q=3;
 mm=q+4;
-    
+ //brb aw bossy ana ha go w heyya keda shaghala inshallahh okaay?   
 }
-  
+ 
+

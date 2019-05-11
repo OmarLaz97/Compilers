@@ -4,6 +4,7 @@
   #include <stdarg.h>
   #include <string.h>
   #include "SymbolTable.c"
+  #include "structs.h"
 
   int yylex();
   void yyerror(char *msg);
