@@ -7,6 +7,12 @@ void main(){
        bool test;
        test =True;
 
+       rakam g;
+
+       lef (g=0; g < 5; g++){
+              //ay haga
+       }
+
        rakam x1;
        law (test){
               x1= 5;

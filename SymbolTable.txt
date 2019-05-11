@@ -76,7 +76,7 @@ HashIndex= 17
 
 HashIndex= 18
 ---------------------------
-Name= test2    Type=0     Scope=3        Value= 5       Permission= 0      Initi= 1
+Name= test2    Type=0     Scope=4        Value= 5       Permission= 0      Initi= 1
 
 
 HashIndex= 19
@@ -180,6 +180,7 @@ Name= f    Type=0     Scope=1        Value= 3       Permission= 0      Initi= 1
 
 HashIndex= 43
 ---------------------------
+Name= g    Type=0     Scope=1        Value= 1       Permission= 0      Initi= 1
 
 
 HashIndex= 44

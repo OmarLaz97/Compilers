@@ -651,10 +651,77 @@
                 | FOR OPENED_BRACKET First_ Second_ Third_ CLOSED_BRACKET OpenedBrace_ ClosedBrace_ {printf("\nValid For Statement");}
                 ;        
 
-        First_: Declaration_ | Assignment_ SEMI_COLON
+        First_: Declaration_ | Assignment_ SEMI_COLON {{
+                        if (TestSymbol != NULL){ //undeclared virtual p=0;
+                                if (FounSymbol != NULL){ //previously declared
+                                        if (FounSymbol->Sym_Scope != Scope_){
+                                                printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
+                                        }
+                                        else {
+                                                printf("Same scope..");
+                                        }  
+                                        if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
+                                                printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
+                                                exit(0);
+                                        }
+                                        else{
+                                               
+                                                if(compare==0)
+                                                {
+                                                        for (int i=0; i<indexExpr; i++){
+                                                                if (FounSymbol->Sym_Type != DatatypeId[i]){//check type
+                                                                        printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
+                                                                        exit(0);
+                                                                }
+                                                        }
+                                                }
+                                                else //compare = 1
+                                                {
+                                                        for (int i=0; i<indexExpr-1; i++){
+                                                             if (FounSymbol->Sym_Type!=4 ||  DatatypeId[i]!= DatatypeId[i+1]){//check type
+                                                                printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
+                                                                exit(0);
+                                                                }    
+                                                        }
+                                                }
+                                                compare=0;
+                                                indexExpr=0;
+                                                FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
+                                                FounSymbol->Sym_Init = TestSymbol->Sym_Init;
+                                                Delete(TestSymbol);
+                                                TestSymbol = NULL; 
+                                                NumberIdent=0;
+                                                FounSymbol = NULL;
+                                        }        
+                             }
+                             else { //not declared at all
+                                printf("Symbol with name %s on line %d not declared", TestSymbol->Sym_Name, mylineno); 
+                                Delete(TestSymbol);
+                                TestSymbol = NULL; 
+                                NumberIdent=0;
+                                exit(0);
+                             }
+                        }
+                }}
               ;
 
-        Second_: Expr_ SEMI_COLON
+        Second_: Expr_ SEMI_COLON {if (compare ==1){
+                printf("INDEX %d", indexExpr);
+                                        for (int i=0; i<indexExpr-1; i++){
+                                                if(DatatypeId[i]!=DatatypeId[i+1])
+                                                {
+                                                        printf(" first type %d ", DatatypeId[i]);
+                                                        printf(" second type %d ", DatatypeId[i+1]);
+                                                        printf("The value of identifier on line %d in for loop is not of the same type\n", mylineno);
+                                                        
+                                                        exit(0);
+                                                }
+                                        }
+                                        NumberIdent=0;
+                                        indexExpr=0;
+                                        compare=0;
+                                        }
+                                }        
                ;
 
         Third_: Assignment_
