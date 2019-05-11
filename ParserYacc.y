@@ -508,7 +508,7 @@
                                                         exit(0);
                                                 }
                                                indexExpr=0;
-                                               Idtnt != numtype){
+                                               if(typeIdtnt!= numtype){
                                                         printf("The value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
                                                         exit(0);
                                                 }
