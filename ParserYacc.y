@@ -377,8 +377,8 @@
             | BOOLVALUE {DatatypeId= 4; $$=$1;}
             ;
 
-        Number_: INTVALUE {DatatypeId =0; $$=$1;}
-               | FLOATVALUE {DatatypeId =1; $$=$1;}
+        Number_: INTVALUE {pushQ(); DatatypeId =0; $$=$1;}
+               | FLOATVALUE {pushQ(); DatatypeId =1; $$=$1;}
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
@@ -406,17 +406,17 @@
                 | Math_ {$$=$1;}
                 ;
 
-        Math_: Math_ PLUS Term_ {$$= $1 + $3;}
-             | Math_ MINUS Term_ {$$= $1 - $3;}
+        Math_: Math_ PLUS Term_ {pushS("ADD"); codegen(); $$= $1 + $3;}
+             | Math_ MINUS Term_ {pushS("SUB"); codegen(); $$= $1 - $3;}
              | Term_ {$$=$1;}
              ;
 
-        Term_: Term_ MULTIPLY Factor_ {$$= $1 * $3;}
-             | Term_ DIVIDE Factor_ {if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;}
+        Term_: Term_ MULTIPLY Factor_ {pushS("MUL"); codegen();$$= $1 * $3;}
+             | Term_ DIVIDE Factor_ {pushS("DIV");codegen();  if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;}
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER {if(getInit($1)) $$=getValue($1);
+        Factor_: IDENTIFIER {pushS($1); if(getInit($1)) $$=getValue($1);
                              else  yyerror("Identifier not initialized");  } 
                 | Val_ {$$=$1;}
                 | Number_ {$$=$1;}
@@ -564,7 +564,11 @@
 %%
 
 #include"lex.yy.c"
-
+#include<ctype.h>
+char st[100][10];
+int topQ=0;
+//char i_[2]="0";
+char tempV[3]="t0"; 
 int main(){
   yyparse();
 
@@ -581,7 +585,38 @@ void yyerror(char *msg){
   exit(0);
 }
 
-
+pushQ()
+{
+strcpy(st[++topQ],yytext);
+}
+pushS( char* val)
+{
+strcpy(st[++topQ],val);
+}
+codegen()
+{ FILE *f = fopen("file.txt", "a");
+// strcpy(temp,"t");
+// strcat(temp,i_);
+fprintf(f," %s  %s %s %s\n",st[topQ],tempV,st[topQ-2],st[topQ-1]);
+fclose(f);
+topQ-=2;
+strcpy(st[topQ],tempV);
+tempV[1]++;
+}
+codegen_umin()
+{
+// strcpy(temp,"t");
+// strcat(temp,i_);
+printf("%s = -%s\n",tempV,st[topQ]);
+topQ--;
+strcpy(st[topQ],tempV);
+tempV[1]++;
+}
+codegen_assign()
+{
+printf(" Load %s  %s\n",st[topQ-2],st[topQ]);
+topQ-=2;
+}
 nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per){
         for (int i=0; i<Num; i++){
                 if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
