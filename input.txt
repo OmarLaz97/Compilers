@@ -15,12 +15,32 @@ void main(){
                      //test2 =3.3;
                      test2=5;
 
+<<<<<<< HEAD
                      x += 4;
                      x++;
               }
        }
        rakam f;
        f=3;
+=======
+    }
+}*/
+void main(){
+  rakam x =1;
+  rakam a =1;
+  rakam y =1;
+  rakam t=2;
+  x=y+3*a/2+5-t;
+  y=x++;
+ x= x--;
+  a*=2;
+  a/=1;
+  --a;
+  a--;
+  a-=3;
+}
+ 
+>>>>>>> 5a7839d25d94022dfcbdf14808822dfedcd548a4
 
        test = f>x;
        
