@@ -11,6 +11,8 @@
 
   int NumberIdent=0;
   char *IDs[10];
+  int TypesArray[10];
+
   int n;
   int DatatypeId;
 
@@ -21,7 +23,7 @@
   int MaxScope=-1;
   push(Scope_);
 
-  nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
+  nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
   nodeType *Test(char* Name, int Per, int Type);
   
@@ -70,7 +72,7 @@
 %right NOT 
 
 %type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_  Expr2_
-%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS FnArgs_ ClosedBracket_
 %type <MyintValue> datatype Val_
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
@@ -100,20 +102,27 @@
                  | Function_ Comment_ FnDeclaration_
                  ;
 
-        FnDeclaration_: VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
- 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}		
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");} 
- 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      ;  
+        FnDeclaration_: VOID IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE Body_ ClosedBrace_ {printf("\nValid Function");}
+                      | VOID IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE Body_ ClosedBrace_ {printf("\nValid Function");}
+                      | datatype IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      | datatype IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}		
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");} 
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      ;
 
-        FnArgs_: datatype IDENTIFIER COMMA FnArgs_
-               | datatype IDENTIFIER
+        OpenedBracket_: OPENED_BRACKET {MaxScope++; Scope_= MaxScope; ScopesArray[Scope_]= true; push(MaxScope);}
+                    ;
+              
+        ClosedBracket_: CLOSED_BRACKET {$$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 0); NumberIdent=0;}
+                      ;
+
+        FnArgs_: datatype IDENTIFIER COMMA FnArgs_ {IDs[NumberIdent] = $2; TypesArray[NumberIdent] = $1; NumberIdent++;}
+               | datatype IDENTIFIER {IDs[NumberIdent] = $2; TypesArray[NumberIdent] = $1; NumberIdent++;}
                | datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA FnArgs_
                | datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET
                ; 
@@ -243,7 +252,10 @@
 
         Declaration_: datatype IdentifierList_ SEMI_COLON { 
                                                 if(TestSymbol == NULL) { //no virtual is created
-                                                        $$ = IdenDetected(IDs, $1, Scope_,NumberIdent, 0); 
+                                                        for (int i=0; i < NumberIdent; i++){
+                                                                TypesArray[i] = $1;
+                                                        }
+                                                        $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 0); 
                                                         TestSymbol = NULL;
                                                         NumberIdent=0;
                                                 }
@@ -282,7 +294,10 @@
                                                 }
                     | CONSTANT datatype IdentifierList_ SEMI_COLON { 
                                                 if(TestSymbol == NULL) { //no virtual is created
-                                                        $$ = IdenDetected(IDs, $2, Scope_,NumberIdent, 1); 
+                                                        for (int i=0; i < NumberIdent; i++){
+                                                                TypesArray[i] = $2;
+                                                        }
+                                                        $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 1); 
                                                         TestSymbol = NULL;
                                                         NumberIdent=0;
                                                 }
@@ -567,7 +582,7 @@ void yyerror(char *msg){
 }
 
 
-nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
+nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per){
         for (int i=0; i<Num; i++){
                 if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
                 printf("\nIdentifier with name %s on line %d is already defined in this scope",a[i], mylineno);
@@ -576,7 +591,7 @@ nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
 
                 struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
                 temp->Sym_Name = a[i];
-                temp->Sym_Type = Type;
+                temp->Sym_Type = Type[i];
                 temp->Sym_Scope = Scope;
                 temp->Sym_Perm = Per;
                 temp->Sym_Init = false;

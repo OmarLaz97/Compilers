@@ -1,5 +1,13 @@
+void fn1(3ayem xx, rakam xy){
+       xx= 5.5;
+       xy= 5;
+}
+
 void main(){
   rakam x, y;
+  gomla kk="g";
+  7arf harfg;
+  harfg = 'f';
 
     rakam jana = 30;
     sabet rakam gg=0;
