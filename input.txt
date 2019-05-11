@@ -1,3 +1,28 @@
+void fn1(3ayem xx, rakam xy){
+       xx= 5.5;
+       xy= 5;
+}
+
+void main(){
+  rakam x;
+  3ayem f;
+  bool y;
+  x=4;
+  f=3.3;
+  x++;
+  x= f++;
+  y= x==3;
+  gomla kk="g";
+  7arf harfg;
+  harfg = 'f';
+
+    rakam jana = 30;
+    sabet rakam gg=0;
+    sabet rakam laz=33;
+ 
+    law(gg){
+        sabet 3ayem laz;
+ //laz = 55;
 
 
 void main(){
