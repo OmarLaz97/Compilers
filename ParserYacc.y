@@ -149,7 +149,12 @@
              | Body_ Assignment_ SEMI_COLON {
                         if (TestSymbol != NULL){ //undeclared virtual p=0;
                              if (FounSymbol != NULL){ //previously declared
-                                        printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
+                                        if (FounSymbol->Sym_Scope != Scope_){
+                                                printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
+                                        }
+                                        else {
+                                                printf("Same scope..");
+                                        }
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
                                                 exit(0);
@@ -186,16 +191,21 @@
              | Assignment_ SEMI_COLON {
                         if (TestSymbol != NULL){ //undeclared virtual p=0;
                                 if (FounSymbol != NULL){ //previously declared
-                                        printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
+                                        if (FounSymbol->Sym_Scope != Scope_){
+                                                printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
+                                        }
+                                        else {
+                                                printf("Same scope..");
+                                        }  
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
                                                 exit(0);
                                         }
                                         else{
-                                                 for (int i=0; i<indexExpr; i++){
+                                                for (int i=0; i<indexExpr; i++){
                                                         if (FounSymbol->Sym_Type != DatatypeId[i]){//check type
-                                                        printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
-                                                        exit(0);
+                                                                printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
+                                                                exit(0);
                                                         }
                                                 }
                                                 indexExpr=0;
@@ -267,10 +277,12 @@
                                                         }
                                                         $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 0); 
                                                         TestSymbol = NULL;
+                                                        indexExpr=0;
                                                         NumberIdent=0;
                                                 }
                                                 else { //fih virtual, fi assignmnett
                                                         if (FounSymbol == NULL){ //not found before
+                                                       
                                                                 for (int i=0; i<indexExpr; i++){
                                                                         if ($1 != DatatypeId[i]){//check datatype
                                                                                 printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
@@ -315,6 +327,7 @@
                                                         }
                                                         $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 1); 
                                                         TestSymbol = NULL;
+                                                        indexExpr=0;
                                                         NumberIdent=0;
                                                 }
                                                 else { //fih virtual, fi assignmnett
@@ -438,17 +451,19 @@
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER {if(getInit($1)) $$=getValue($1);
+        Factor_: IDENTIFIER { DatatypeId[indexExpr] =gettype($1); indexExpr++;if(getInit($1)) $$=getValue($1);
                              else  yyerror("Identifier not initialized");  } 
                 | Val_ {$$=$1;}
                 | Number_ {$$=$1;}
                 | OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
-        IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ ELSE OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
-               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ ELSE IfStmt_ {printf("\nValid If Statement");}
+        IfStmt_: IF OPENED_BRACKET Expr_ ClosedBracket2_ OpenedBrace_ Body_ ClosedBrace_ { printf("\nValid If Statement");}
+               | IF OPENED_BRACKET Expr_ ClosedBracket2_ OpenedBrace_ Body_ ClosedBrace_ ELSE OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
+               | IF OPENED_BRACKET Expr_ ClosedBracket2_ OpenedBrace_ Body_ ClosedBrace_ ELSE IfStmt_ {printf("\nValid If Statement");}
                ;
+
+        ClosedBracket2_ : CLOSED_BRACKET {indexExpr=0;}       
 
         IfRtn_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyRtn_ ClosedBrace_ {printf("\nValid If Statement");}
               | IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ BodyRtn_ ClosedBrace_ ELSE OpenedBrace_ BodyRtn_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -673,6 +688,7 @@ bool getInit(char* Name){
         newinit=symbolEntry->Sym_Init;
         return newinit;
 }
+//aheeh heeehh tayyeb yalla sanyyaaaaa laa tamam yala netla3 fo2 aywaa yalla
 int gettype(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
