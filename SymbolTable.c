@@ -147,16 +147,21 @@ union Value SearchTableVal(char *Name, int Type, int Scope, bool *Found){
 }
 
 void PrintSymbolTable(){
+    FILE * fp = fopen ("SymbolTable.txt","w");
     for (int HashIndex=0; HashIndex< HASH_SIZE; HashIndex++){
         printf("HashIndex= %d", HashIndex);
         printf("\n---------------------------\n");
+        fprintf(fp, "HashIndex= %d", HashIndex);
+        fprintf(fp, "\n---------------------------\n");
 
         struct SymbolInfo *temp= HashTable[HashIndex];
         while (temp != NULL){
             printf("Name= %s    Type=%d     Scope=%d        Value= %d       Permission= %d      Initi= %d\n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope, temp->Sym_Value, temp->Sym_Perm, temp->Sym_Init);
+            fprintf(fp, "Name= %s    Type=%d     Scope=%d        Value= %d       Permission= %d      Initi= %d\n", temp->Sym_Name, temp->Sym_Type, temp->Sym_Scope, temp->Sym_Value, temp->Sym_Perm, temp->Sym_Init); 
             temp= temp->Next;
         }
         printf("\n\n"); 
+        fprintf(fp, "\n\n"); 
     }
 }
 
