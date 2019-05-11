@@ -1,4 +1,4 @@
-void fn1(3ayem xx, rakam xy){
+/*void fn1(3ayem xx, rakam xy){
        xx= 5.5;
        xy= 5;
 }
@@ -22,9 +22,10 @@ void main(){
  
     law(gg){
         sabet 3ayem laz;
- //laz = 55;
+        //laz = 55;
 
-
+    }
+}*/
 void main(){
   rakam x =1;
   rakam a =1;

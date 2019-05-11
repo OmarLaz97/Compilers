@@ -470,8 +470,8 @@
             | BOOLVALUE {DatatypeId[indexExpr]= 4; indexExpr++; $$=$1;}
             ;
 
-        Number_: INTVALUE {DatatypeId[indexExpr] =0; indexExpr++; $$=$1;}
-               | FLOATVALUE {DatatypeId[indexExpr] =1; indexExpr++; $$=$1;}
+        Number_: INTVALUE {pushQ();DatatypeId[indexExpr] =0; indexExpr++; $$=$1;}
+               | FLOATVALUE {pushQ();DatatypeId[indexExpr] =1; indexExpr++; $$=$1;}
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
@@ -509,7 +509,7 @@
              | Factor_ {$$=$1;}
              ;
 
-        Factor_: IDENTIFIER { DatatypeId[indexExpr] =gettype($1); indexExpr++;if(getInit($1)) $$=getValue($1);
+        Factor_: IDENTIFIER { pushS($1); DatatypeId[indexExpr] =gettype($1); indexExpr++;if(getInit($1)) $$=getValue($1);
                              else  yyerror("Identifier not initialized");  } 
                 | Val_ {$$=$1;}
                 | Number_ {$$=$1;}
