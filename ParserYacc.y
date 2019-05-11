@@ -406,13 +406,13 @@
                 | Math_ {$$=$1;}
                 ;
 
-        Math_: Math_ PLUS {pushQ();} Term_ {$$= $1 + $3;codegen();}
-             | Math_ MINUS {pushQ();} Term_ {$$= $1 - $3;codegen();}
+        Math_: Math_ PLUS {pushS("ADD");} Term_ {codegen();$$= $1 + $3;}
+             | Math_ MINUS {pushS("SUB");} Term_ {codegen(); $$= $1 - $3;}
              | Term_ {$$=$1;}
              ;
 
-        Term_: Term_ MULTIPLY {pushQ();} Factor_ {$$= $1 * $3;codegen();}
-             | Term_ DIVIDE {pushQ();} Factor_ {if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;codegen();}
+        Term_: Term_ MULTIPLY {pushS("MUL");} Factor_ {codegen();$$= $1 * $3;}
+             | Term_ DIVIDE {pushS("DIV");} Factor_ {codegen(); if ($3 == 0.0) yyerror("Divide By Zero"); else $$= $1 / $3;}
              | Factor_ {$$=$1;}
              ;
 
@@ -580,6 +580,10 @@ printf("QUADRUPLES\n");
 pushQ()
 {
 strcpy(st[++topQ],yytext);
+}
+pushS( char* val)
+{
+strcpy(st[++topQ],val);
 }
 codegen()
 {
