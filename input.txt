@@ -5,9 +5,13 @@ void fn1(3ayem xx, rakam xy){
 
 void main(){
   rakam x;
+  3ayem f;
   bool y;
-  x=3;
-  y= 6>3;
+  x=4;
+  f=3.3;
+  x++;
+  x= f++;
+  y= x==3;
   gomla kk="g";
   7arf harfg;
   harfg = 'f';
