@@ -14,7 +14,7 @@
   int TypesArray[10];
 
   int n;
-  int DatatypeId;
+  int DatatypeId[10];
 
  struct SymbolInfo * TestSymbol = NULL;
   struct SymbolInfo * FounSymbol = NULL;
@@ -26,13 +26,15 @@
   nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
   nodeType *Test(char* Name, int Per, int Type);
+  int gettype(char* Name);
   
   int Abrev(char* Name, int c,int val);
   nodeType * Assign2(char* Name, bool newValue);
   int getValue(char* Name);
   bool getInit(char* Name);
 
- 
+  int ExprTypes[10];
+  int indexExpr= 0;
 
 %}
 
@@ -152,11 +154,16 @@
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
                                                 exit(0);
                                         }
-                                        else{
-                                                if (FounSymbol->Sym_Type != DatatypeId){//check type
+                                        else{   
+                                                
+                                                for (int i=0; i<indexExpr; i++){
+                                                        if (FounSymbol->Sym_Type != DatatypeId[i]){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
                                                         exit(0);
+                                                        }
                                                 }
+                                                indexExpr=0;
+                                                
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
                                                 Delete(TestSymbol);
@@ -185,10 +192,13 @@
                                                 exit(0);
                                         }
                                         else{
-                                                if (FounSymbol->Sym_Type != DatatypeId){//check type
+                                                 for (int i=0; i<indexExpr; i++){
+                                                        if (FounSymbol->Sym_Type != DatatypeId[i]){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
                                                         exit(0);
+                                                        }
                                                 }
+                                                indexExpr=0;
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
                                                 Delete(TestSymbol);
@@ -261,13 +271,16 @@
                                                 }
                                                 else { //fih virtual, fi assignmnett
                                                         if (FounSymbol == NULL){ //not found before
-                                                                if ($1 != DatatypeId){//check datatype
-                                                                        printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
-                                                                        Delete(TestSymbol);        
-                                                                        TestSymbol = NULL; 
-                                                                        NumberIdent=0;
-                                                                        exit(0);
+                                                                for (int i=0; i<indexExpr; i++){
+                                                                        if ($1 != DatatypeId[i]){//check datatype
+                                                                                printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                                Delete(TestSymbol);        
+                                                                                TestSymbol = NULL; 
+                                                                                NumberIdent=0;
+                                                                                exit(0);
+                                                                        }
                                                                 }
+                                                                indexExpr=0;
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
                                                                 NumberIdent=0;
@@ -278,13 +291,16 @@
                                                                 exit(0);
                                                                 }
                                                                 //not same scope
-                                                                if ($1 != DatatypeId){//check datatype
-                                                                        printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
-                                                                        Delete(TestSymbol);
-                                                                        TestSymbol = NULL; 
-                                                                        NumberIdent=0;
-                                                                        exit(0);
+                                                                for (int i=0; i<indexExpr; i++){
+                                                                        if ($1 != DatatypeId[i]){//check datatype
+                                                                                printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                                Delete(TestSymbol);
+                                                                                TestSymbol = NULL; 
+                                                                                NumberIdent=0;
+                                                                                exit(0);
+                                                                        }
                                                                 }
+                                                                indexExpr=0;
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
                                                                 NumberIdent=0;
@@ -303,13 +319,16 @@
                                                 }
                                                 else { //fih virtual, fi assignmnett
                                                         if (FounSymbol == NULL){
-                                                                if ($2 != DatatypeId){//check datatype
-                                                                        printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
-                                                                        Delete(TestSymbol);
-                                                                        TestSymbol = NULL; 
-                                                                        NumberIdent=0;
-                                                                        exit(0);
+                                                                for (int i=0; i<indexExpr; i++){
+                                                                        if ($2 != DatatypeId[i]){//check datatype
+                                                                                printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                                Delete(TestSymbol);
+                                                                                TestSymbol = NULL; 
+                                                                                NumberIdent=0;
+                                                                                exit(0);
+                                                                        }
                                                                 }
+                                                                indexExpr =0;
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
                                                                 NumberIdent=0;
@@ -320,13 +339,16 @@
                                                                 exit(0);
                                                                 }
                                                                 //not same scope
-                                                                if ($2 != DatatypeId){//check datatype
-                                                                        printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
-                                                                        Delete(TestSymbol);
-                                                                        TestSymbol = NULL; 
-                                                                        NumberIdent=0;
-                                                                        exit(0);
+                                                                for (int i=0; i<indexExpr;i++){
+                                                                        if ($2 != DatatypeId[i]){//check datatype
+                                                                                printf("The value of identifier %s on line %d is not of the same type\n", TestSymbol->Sym_Name, mylineno);
+                                                                                Delete(TestSymbol);
+                                                                                TestSymbol = NULL; 
+                                                                                NumberIdent=0;
+                                                                                exit(0);
+                                                                        }
                                                                 }
+                                                                indexExpr=0;
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
                                                                 NumberIdent=0;
@@ -372,13 +394,13 @@
                    |IDENTIFIER EQUAL FnCall_
                    ;
 
-        Val_: STRINGVALUE {DatatypeId= 2; $$=$1;}
-            | CHARVALUE {DatatypeId= 3; $$=$1;}
-            | BOOLVALUE {DatatypeId= 4; $$=$1;}
+        Val_: STRINGVALUE {DatatypeId[indexExpr]= 2; indexExpr++; $$=$1;}
+            | CHARVALUE {DatatypeId[indexExpr]= 3; indexExpr++; $$=$1;}
+            | BOOLVALUE {DatatypeId[indexExpr]= 4; indexExpr++; $$=$1;}
             ;
 
-        Number_: INTVALUE {DatatypeId =0; $$=$1;}
-               | FLOATVALUE {DatatypeId =1; $$=$1;}
+        Number_: INTVALUE {DatatypeId[indexExpr] =0; indexExpr++; $$=$1;}
+               | FLOATVALUE {DatatypeId[indexExpr] =1; indexExpr++; $$=$1;}
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS {$$=Abrev($1,1,1);}
@@ -396,12 +418,12 @@
 
         Logical_: Logical_ AND Math_
                 | Logical_ OR Math_
-                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false; DatatypeId=4;}
-                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false; DatatypeId=4;}
-                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;DatatypeId=4;}
-                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;DatatypeId=4;}
-                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;DatatypeId=4;}
-                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false; DatatypeId[indexExpr]=4; indexExpr++;}
+                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false; DatatypeId[indexExpr]=4; indexExpr++;}
+                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;DatatypeId[indexExpr]=4; indexExpr++;}
+                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;DatatypeId[indexExpr]=4; indexExpr++;}
+                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;DatatypeId[indexExpr]=4; indexExpr++;}
+                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;DatatypeId[indexExpr]=4; indexExpr++;}
                 | NOT Math_
                 | Math_ {$$=$1;}
                 ;
@@ -651,6 +673,17 @@ bool getInit(char* Name){
         newinit=symbolEntry->Sym_Init;
         return newinit;
 }
+int gettype(char* Name){
+        struct SymbolInfo *symbolEntry = SearchByName(Name);
+        if (symbolEntry == NULL){
+                printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
+                exit(0);
+        }
+        int newinit;
+        newinit=symbolEntry->Sym_Type;
+        return newinit;
+}
+
 int Abrev(char* Name , int c,int val)
 {
          struct SymbolInfo *symbolEntry = SearchByName(Name);
