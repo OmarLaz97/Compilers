@@ -11,6 +11,8 @@
 
   int NumberIdent=0;
   char *IDs[10];
+  int TypesArray[10];
+
   int n;
   int DatatypeId;
 
@@ -21,7 +23,7 @@
   int MaxScope=-1;
   push(Scope_);
 
-  nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per);
+  nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per);
   nodeType * Assign(char* Name, int newValue);
   nodeType *Test(char* Name, int Per, int Type);
   
@@ -70,7 +72,7 @@
 %right NOT 
 
 %type <MyintValue> Expr_ Number_ Factor_ Math_ Logical_ Term_  Expr2_
-%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS
+%type <nPtr> Declaration_ IdentifierList_ BodyLoop_ WhileStmt_ Assignment_  PLUS_PLUS FnArgs_ ClosedBracket_
 %type <MyintValue> datatype Val_
 /*%type <nPtr> Math_ Term_ Expr_ Logical_ Factor_ Number_*/
 
@@ -100,20 +102,27 @@
                  | Function_ Comment_ FnDeclaration_
                  ;
 
-        FnDeclaration_: VOID IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | VOID IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE Body_ CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
- 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET FnArgs_ CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}		
-                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");} 
- 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OPENED_BRACKET CLOSED_BRACKET OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON CLOSED_BRACE {printf("\nValid Function");}
-                      ;  
+        FnDeclaration_: VOID IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE Body_ ClosedBrace_ {printf("\nValid Function");}
+                      | VOID IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE Body_ ClosedBrace_ {printf("\nValid Function");}
+                      | datatype IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      | datatype IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ FnArgs_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}		
+                      | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE ArrayListVal_ CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");} 
+ 		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN OPENED_BRACE CLOSED_BRACE SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+		        | datatype OPENED_SQ_BRACKET CLOSED_SQ_BRACKET IDENTIFIER OpenedBracket_ ClosedBracket_ OPENED_BRACE BodyRtn_ RETURN AllVals_ SEMI_COLON ClosedBrace_ {printf("\nValid Function");}
+                      ;
 
-        FnArgs_: datatype IDENTIFIER COMMA FnArgs_
-               | datatype IDENTIFIER
+        OpenedBracket_: OPENED_BRACKET {MaxScope++; Scope_= MaxScope; ScopesArray[Scope_]= true; push(MaxScope);}
+                    ;
+              
+        ClosedBracket_: CLOSED_BRACKET {$$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 0); NumberIdent=0;}
+                      ;
+
+        FnArgs_: datatype IDENTIFIER COMMA FnArgs_ {IDs[NumberIdent] = $2; TypesArray[NumberIdent] = $1; NumberIdent++;}
+               | datatype IDENTIFIER {IDs[NumberIdent] = $2; TypesArray[NumberIdent] = $1; NumberIdent++;}
                | datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET COMMA FnArgs_
                | datatype IDENTIFIER OPENED_SQ_BRACKET CLOSED_SQ_BRACKET
                ; 
@@ -141,12 +150,12 @@
                                         printf("Symbol with name %s on line %d not declared in this scope but declared before\n", TestSymbol->Sym_Name, mylineno);
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
-                                                exit(1);
+                                                exit(0);
                                         }
                                         else{
                                                 if (FounSymbol->Sym_Type != DatatypeId){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
-                                                        exit(1);
+                                                        exit(0);
                                                 }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
@@ -161,7 +170,7 @@
                                 Delete(TestSymbol);
                                 TestSymbol = NULL; 
                                 NumberIdent=0;
-                                exit(1);
+                                exit(0);
                              }
                              
                         }
@@ -173,12 +182,12 @@
                                         printf("Symbol with name %s on line %d not declared in this scope but declared before", TestSymbol->Sym_Name, mylineno);
                                         if (FounSymbol->Sym_Perm== 1 && FounSymbol->Sym_Init == 1){//const and already assigned
                                                 printf("Cannot change the value of Constant %s on line %d", FounSymbol->Sym_Name, mylineno);
-                                                exit(1);
+                                                exit(0);
                                         }
                                         else{
                                                 if (FounSymbol->Sym_Type != DatatypeId){//check type
                                                         printf("Value of identifier %s on line %d is not of the same type\n", FounSymbol->Sym_Name, mylineno);
-                                                        exit(1);
+                                                        exit(0);
                                                 }
                                                 FounSymbol->Sym_Value.MyintValue = TestSymbol->Sym_Value.MyintValue;
                                                 FounSymbol->Sym_Init = TestSymbol->Sym_Init;
@@ -193,7 +202,7 @@
                                 Delete(TestSymbol);
                                 TestSymbol = NULL; 
                                 NumberIdent=0;
-                                exit(1);
+                                exit(0);
                              }
                         }
                 }
@@ -243,7 +252,10 @@
 
         Declaration_: datatype IdentifierList_ SEMI_COLON { 
                                                 if(TestSymbol == NULL) { //no virtual is created
-                                                        $$ = IdenDetected(IDs, $1, Scope_,NumberIdent, 0); 
+                                                        for (int i=0; i < NumberIdent; i++){
+                                                                TypesArray[i] = $1;
+                                                        }
+                                                        $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 0); 
                                                         TestSymbol = NULL;
                                                         NumberIdent=0;
                                                 }
@@ -254,7 +266,7 @@
                                                                         Delete(TestSymbol);        
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
@@ -263,7 +275,7 @@
                                                         else { //found before
                                                                 if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
                                                                 printf("Already declared in same scope\n");
-                                                                exit(1);
+                                                                exit(0);
                                                                 }
                                                                 //not same scope
                                                                 if ($1 != DatatypeId){//check datatype
@@ -271,7 +283,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 0, $1);
                                                                 TestSymbol = NULL;
@@ -282,7 +294,10 @@
                                                 }
                     | CONSTANT datatype IdentifierList_ SEMI_COLON { 
                                                 if(TestSymbol == NULL) { //no virtual is created
-                                                        $$ = IdenDetected(IDs, $2, Scope_,NumberIdent, 1); 
+                                                        for (int i=0; i < NumberIdent; i++){
+                                                                TypesArray[i] = $2;
+                                                        }
+                                                        $$ = IdenDetected(IDs, TypesArray, Scope_,NumberIdent, 1); 
                                                         TestSymbol = NULL;
                                                         NumberIdent=0;
                                                 }
@@ -293,7 +308,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
@@ -302,7 +317,7 @@
                                                         else {
                                                                 if (TestSymbol->Sym_Scope == FounSymbol->Sym_Scope){
                                                                 printf("Declared in same scope");
-                                                                exit(1);
+                                                                exit(0);
                                                                 }
                                                                 //not same scope
                                                                 if ($2 != DatatypeId){//check datatype
@@ -310,7 +325,7 @@
                                                                         Delete(TestSymbol);
                                                                         TestSymbol = NULL; 
                                                                         NumberIdent=0;
-                                                                        exit(1);
+                                                                        exit(0);
                                                                 }
                                                                 $$ = Test(IDs[0], 1, $2);
                                                                 TestSymbol = NULL;
@@ -381,12 +396,12 @@
 
         Logical_: Logical_ AND Math_
                 | Logical_ OR Math_
-                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false;}
-                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false;}
-                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;}
-                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;}
-                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;}
-                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;}
+                | Logical_ GREATERTHAN Math_ {if($1>$3) $$=true; else $$=false; DatatypeId=4;}
+                | Logical_ GREATERTHANOREQUAL Math_ {if($1>=$3) $$=true; else $$=false; DatatypeId=4;}
+                | Logical_ SMALLERTHAN Math_ {if($1<$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ SMALLERTHANOREQUAL Math_ {if($1<=$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ EQUALEQUAL Math_ {if($1==$3) $$=true; else $$=false;DatatypeId=4;}
+                | Logical_ NOTEQUAL Math_ {if($1!=$3) $$=true; else $$=false;DatatypeId=4;}
                 | NOT Math_
                 | Math_ {$$=$1;}
                 ;
@@ -403,7 +418,9 @@
 
         Factor_: IDENTIFIER {if(getInit($1)) $$=getValue($1);
                              else  yyerror("Identifier not initialized");  } 
-                                | Val_ | Number_ {$$=$1;}| OPENED_BRACKET Logical_ CLOSED_BRACKET 
+                | Val_ {$$=$1;}
+                | Number_ {$$=$1;}
+                | OPENED_BRACKET Logical_ CLOSED_BRACKET 
                | IDENTIFIER OPENED_SQ_BRACKET ArrIndex_ CLOSED_SQ_BRACKET;
 
         IfStmt_: IF OPENED_BRACKET Expr_ CLOSED_BRACKET OpenedBrace_ Body_ ClosedBrace_ {printf("\nValid If Statement");}
@@ -561,27 +578,27 @@ return 1;
 
 void yyerror(char *msg){
   fprintf(stderr,"\nError on line %d : %s",mylineno,msg);
-  exit(1);
+  exit(0);
 }
 
 
-nodeType * IdenDetected(char *a[], int Type, int Scope, int Num, int Per){
+nodeType * IdenDetected(char *a[], int Type[], int Scope, int Num, int Per){
         for (int i=0; i<Num; i++){
                 if (AlreadyDeclaredInScope(a[i],Scope)!=NULL){
                 printf("\nIdentifier with name %s on line %d is already defined in this scope",a[i], mylineno);
-                exit(1);
+                exit(0);
                 }
 
                 struct SymbolInfo *temp= malloc(sizeof(struct SymbolInfo));  
                 temp->Sym_Name = a[i];
-                temp->Sym_Type = Type;
+                temp->Sym_Type = Type[i];
                 temp->Sym_Scope = Scope;
                 temp->Sym_Perm = Per;
                 temp->Sym_Init = false;
 
                 if (!InsertTable(temp)){
                         printf("\nIdentifier with name %s on line %d and same type is already defined in this scope",a[i], mylineno);
-                        exit(1);
+                        exit(0);
                 }
         }
         
@@ -617,7 +634,7 @@ int getValue(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
                 printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
-                exit(1);
+                exit(0);
         }
         int newv;
         newv=symbolEntry->Sym_Value.MyintValue;
@@ -628,7 +645,7 @@ bool getInit(char* Name){
         struct SymbolInfo *symbolEntry = SearchByName(Name);
         if (symbolEntry == NULL){
                 printf("\nIdentifier with name %s on line %d is not declared",Name, mylineno);
-                exit(1);
+                exit(0);
         }
         bool newinit;
         newinit=symbolEntry->Sym_Init;
@@ -637,7 +654,10 @@ bool getInit(char* Name){
 int Abrev(char* Name , int c,int val)
 {
          struct SymbolInfo *symbolEntry = SearchByName(Name);
-         
+         if (symbolEntry == NULL){
+                 printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
+                exit(0); 
+         }
          int newv;
         if(c==1)
         {
@@ -657,7 +677,7 @@ int Abrev(char* Name , int c,int val)
         }
         if(!UpdateHash3(Name, newv)){
                 printf("\nIdentifier with name %s on line %d is not declared in this/previous scopes",Name, mylineno);
-                exit(1);  
+                exit(0);  
         }
         return newv;
 

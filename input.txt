@@ -1,32 +1,40 @@
+void fn1(3ayem xx, rakam xy){
+       xx= 5.5;
+       xy= 5;
+}
+
 void main(){
   rakam x, y;
+  gomla kk="g";
+  7arf harfg;
+  harfg = 'f';
 
     rakam jana = 30;
     sabet rakam gg=0;
     sabet rakam laz=33;
-    
+ 
     law(gg){
         sabet 3ayem laz;
-        //laz = 55;
+ //laz = 55;
 
         law(gg){
-           // jana =5;
-            laz =511.21;
-        }
-        
-        //laz=99;
+ // jana =5;
+ laz =511.1;
+ }
+ 
+ //laz=99;
         rakam maram= 77;
-        //rakam maram;
-    }
+ //rakam maram;
+ }
 
-    //maram=0;
+ //maram=0;
 rakam yassin;
 yassin=3;
 yassin=yassin + jana;
 yassin+=4;
     rakam m,l,k,u,a,mm;
 bool g,mirna,walaa;
-m=2;
+m=10;
 u=4;
 a=10;
 //mirna=a>8;
@@ -35,6 +43,7 @@ a=10;
 mm=3;
 rakam q=3;
 mm=q+4;
-    
+ 
 }
-  
+ 
+
