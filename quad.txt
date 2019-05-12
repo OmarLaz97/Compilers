@@ -1,0 +1,24 @@
+
+
+void main(){
+ 
+
+  rakam x =1;
+  rakam a =1;
+  rakam y =1;
+  rakam t=2;
+ x=y+3*a/2+5-t;
+  x++;
+ ++x;
+  a*=2;
+  a/=1;
+  --a;
+  a-=5;
+  a+=3;
+ x=y+3;
+
+ 
+
+ 
+ 
+}

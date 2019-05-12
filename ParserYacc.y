@@ -591,10 +591,10 @@
                ;
 
         Expr2_: IDENTIFIER PLUS_PLUS {codegen_single("ADD", $1, 1);Expr2Type= gettype($1); $$=Abrev($1,1,1);}
-              | PLUS_PLUS IDENTIFIER {codegen_single("ADD", $1, 1);Expr2Type= gettype($2); $$=Abrev($2,1,1);}
-              | IDENTIFIER MINUS_MINUS{Expr2Type= gettype($1); $$=Abrev($1,2,1);}
-              | MINUS_MINUS IDENTIFIER {Expr2Type= gettype($2); $$=Abrev($2,2,1);}
-              |IDENTIFIER PLUS_EQUAL Number_ {int typeIdtnt= gettype($1); 
+              | PLUS_PLUS IDENTIFIER {codegen_single("ADD", $2, 1);Expr2Type= gettype($2); $$=Abrev($2,1,1);}
+              | IDENTIFIER MINUS_MINUS{codegen_single("SUB", $1, 1); Expr2Type= gettype($1); $$=Abrev($1,2,1);}
+              | MINUS_MINUS IDENTIFIER {codegen_single("SUB", $2, 1); Expr2Type= gettype($2); $$=Abrev($2,2,1);}
+              |IDENTIFIER PLUS_EQUAL Number_ {codegen_single("ADD", $1, $3);int typeIdtnt= gettype($1); 
                                                 int numtype= DatatypeId[indexExpr-1]; 
                                                  if (typeIdtnt != numtype){
                                                         printf("\nThe value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
@@ -602,14 +602,14 @@
                                                 }
                                                indexExpr=0;
                                                 $$=Abrev($1,1,$3);}
-              |IDENTIFIER MINUS_EQUAL Number_ {int typeIdtnt= gettype($1); 
+              |IDENTIFIER MINUS_EQUAL Number_ {codegen_single("SUB", $1, $3); int typeIdtnt= gettype($1); 
                                                 int numtype= DatatypeId[indexExpr-1]; 
                                                  if (typeIdtnt != numtype){
                                                         printf("\nThe value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
                                                         exit(0);
                                                 }
                                                indexExpr=0;$$=Abrev($1,2,$3);}
-              |IDENTIFIER MULTIPLY_EQUAL Number_ {int typeIdtnt= gettype($1); 
+              |IDENTIFIER MULTIPLY_EQUAL Number_ {codegen_single("MUL", $1, $3); int typeIdtnt= gettype($1); 
                                                 int numtype= DatatypeId[indexExpr-1]; 
                                                  if (typeIdtnt != numtype){
                                                         printf("\nThe value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
@@ -617,7 +617,7 @@
                                                 }
                                                indexExpr=0;
                                                $$=Abrev($1,3,$3);}
-                |IDENTIFIER DIVIDE_EQUAL Number_ {int typeIdtnt= gettype($1); 
+                |IDENTIFIER DIVIDE_EQUAL Number_ {codegen_single("DIV", $1, $3); int typeIdtnt= gettype($1); 
                                                 int numtype= DatatypeId[indexExpr-1]; 
                                                  if (typeIdtnt != numtype){
                                                         printf("\nThe value of identifier %s on line %d is not of the same type..\n", $1, mylineno);
