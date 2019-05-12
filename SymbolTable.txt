@@ -1,12 +1,13 @@
 HashIndex= 0
 ---------------------------
-Name= x    Type=0     Scope=1        Value= 5       Permission= 0      Initi= 1
+Name= x    Type=0     Scope=2        Value= 5       Permission= 0      Initi= 1
+Name= x    Type=0     Scope=1        Value= 0       Permission= 0      Initi= 1
 Name= x    Type=1     Scope=0        Value= 3       Permission= 0      Initi= 1
 
 
 HashIndex= 1
 ---------------------------
-Name= y    Type=0     Scope=1        Value= 6       Permission= 0      Initi= 1
+Name= y    Type=0     Scope=2        Value= 6       Permission= 0      Initi= 1
 Name= y    Type=0     Scope=0        Value= 3       Permission= 0      Initi= 1
 
 
@@ -76,7 +77,7 @@ HashIndex= 17
 
 HashIndex= 18
 ---------------------------
-Name= test2    Type=0     Scope=4        Value= 5       Permission= 0      Initi= 1
+Name= test2    Type=0     Scope=6        Value= 5       Permission= 0      Initi= 1
 
 
 HashIndex= 19
@@ -117,7 +118,7 @@ HashIndex= 27
 
 HashIndex= 28
 ---------------------------
-Name= test    Type=4     Scope=1        Value= 0       Permission= 0      Initi= 1
+Name= test    Type=4     Scope=2        Value= 0       Permission= 0      Initi= 1
 
 
 HashIndex= 29
@@ -154,11 +155,12 @@ HashIndex= 36
 
 HashIndex= 37
 ---------------------------
-Name= a    Type=0     Scope=1        Value= -3       Permission= 0      Initi= 1
+Name= a    Type=0     Scope=2        Value= -3       Permission= 0      Initi= 1
 
 
 HashIndex= 38
 ---------------------------
+Name= b    Type=1     Scope=1        Value= 4       Permission= 0      Initi= 1
 
 
 HashIndex= 39
@@ -175,12 +177,12 @@ HashIndex= 41
 
 HashIndex= 42
 ---------------------------
-Name= f    Type=0     Scope=1        Value= 3       Permission= 0      Initi= 1
+Name= f    Type=0     Scope=2        Value= 3       Permission= 0      Initi= 1
 
 
 HashIndex= 43
 ---------------------------
-Name= g    Type=0     Scope=1        Value= 1       Permission= 0      Initi= 1
+Name= g    Type=0     Scope=2        Value= 1       Permission= 0      Initi= 1
 
 
 HashIndex= 44
@@ -205,7 +207,7 @@ HashIndex= 48
 
 HashIndex= 49
 ---------------------------
-Name= x1    Type=0     Scope=1        Value= 10       Permission= 0      Initi= 1
+Name= x1    Type=0     Scope=2        Value= 10       Permission= 0      Initi= 1
 
 
 HashIndex= 50
@@ -234,7 +236,7 @@ HashIndex= 55
 
 HashIndex= 56
 ---------------------------
-Name= t    Type=0     Scope=1        Value= 2       Permission= 0      Initi= 1
+Name= t    Type=0     Scope=2        Value= 2       Permission= 0      Initi= 1
 
 
 HashIndex= 57

@@ -3,6 +3,12 @@ void Fn1(3ayem x, rakam y){
        y=3;
 }
 
+rakam Fn2(rakam x){
+       x=0;
+       3ayem b=4.45;
+       return x;
+}
+
 void main(){
        bool test;
        test =True;
@@ -11,6 +17,10 @@ void main(){
 
        lef (g=0; g < 5; g++){
               //ay haga
+       }
+       
+       talama(test){
+              //test
        }
 
        rakam x1;
